@@ -1,7 +1,7 @@
 // src/pages/Main.js
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-//import '../css/Main.styled.css';-------수정
+import '../css/Main.styled.css';
 import camera from '../assets/camera.png';
 import calendar from '../assets/calendar_image.png';
 import glass from '../assets/reading_glasses.png';
