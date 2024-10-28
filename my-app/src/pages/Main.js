@@ -13,14 +13,14 @@ function Main() {
   const [error, setError] = useState(''); // 오류 상태 추가
 
   const handleButtonClick = () => {
+    console.log('버튼 클릭됨'); // 로그 추가
     axios.get('http://52.78.154.108:3000/users/asdf')
       .then((response) => {
-        setUserData(response.data);
-        setError(''); // 오류 메시지 초기화
+        console.log('데이터 수신:', response.data); // 로그 추가
+        setUserData(response.data); // 받아온 데이터 저장
       })
       .catch((error) => {
         console.error('데이터를 가져오는 데 실패했습니다:', error);
-        setError('데이터를 가져오는 데 실패했습니다.'); // 오류 메시지 설정
       });
   };
   

@@ -1,8 +1,10 @@
 const express = require("express");
 const path = require("path");
 const mysql = require("mysql2");  // MySQL 모듈 불러오기
+const cors = require('cors'); // cors 패키지 불러오기
 
 const app = express();
+app.use(cors()); // CORS 허용
 app.use(express.json());  // JSON 요청을 처리할 수 있도록 설정
 
 // 포트 설정 (3000번 포트를 기본값으로 사용)
@@ -46,6 +48,7 @@ app.get("/", (req, res) => {
 });
 
 // 서버 실행
+const PORT = process.env.PORT || 3000;
 app.listen(app.get("port"), () => {
   console.log(app.get("port"), "번 포트에서 대기중..");
 });
