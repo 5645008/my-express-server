@@ -54,7 +54,6 @@
     text-decoration: none;
     background-color: #fff;
   }
-  
   .button {
     display: inline-block; /* 버튼이 보이도록 설정 */
     visibility: visible; /* 보이게 설정 */

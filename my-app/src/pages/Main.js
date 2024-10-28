@@ -58,10 +58,10 @@ function Main() {
       {userData && (
         <div>
           <h3>데이터 결과</h3>
-          <p>아이디: {userData.u_id}</p>
-          <p>비밀번호: {userData.u_password}</p>
-          <p>이름: {userData.u_name}</p>
-          <p>나이: {userData.u_age}</p>
+          <p>아이디: {userData.u_id || '정보 없음'}</p>
+          <p>비밀번호: {userData.u_password || '정보 없음'}</p>
+          <p>이름: {userData.u_name || '정보 없음'}</p>
+          <p>나이: {userData.u_age || '정보 없음'}</p>
         </div>
       )}
 
