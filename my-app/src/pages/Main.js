@@ -1,5 +1,6 @@
 // src/pages/Main.js
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
 import '../css/Main.styled.css';
 import camera from '../assets/camera.png';
@@ -8,6 +9,17 @@ import glass from '../assets/reading_glasses.png';
 
 function Main() {
   const [today, setToday] = useState('');
+
+  const handleButtonClick = () => {
+    // 서버에서 id가 asdf인 데이터 가져오기
+    axios.get('http://52.78.154.108:3000/users/asdf')
+      .then((response) => {
+        setUserData(response.data);  // 받아온 데이터 저장
+      })
+      .catch((error) => {
+        console.error('데이터를 가져오는 데 실패했습니다:', error);
+      });
+  };
 
   // 현재 날짜를 가져와서 YYYY-MM-DD 형식으로 설정
   useEffect(() => {
@@ -32,6 +44,20 @@ function Main() {
           </button>
         </Link>
       </div>
+
+      {/* DB 테스트용 버튼 */}
+      <button onClick={handleButtonClick}>DB에서 데이터 가져오기</button>
+
+      {/* 서버에서 받아온 데이터 출력 */}
+      {userData && (
+        <div>
+          <h3>데이터 결과</h3>
+          <p>아이디: {u_id}</p>
+          <p>비밀번호: {u_password}</p>
+          <p>이름: {u_name}</p>
+          <p>나이: {u_age}</p>
+        </div>
+      )}
 
       {/* 오늘의 약 정보 */}
       <div className="medication-card">
