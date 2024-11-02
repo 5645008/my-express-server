@@ -1,9 +1,26 @@
 // src/pages/Login.js
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import '../css/Login.styled.css';
+import axios from 'axios';
 
 function Login() {
+  const [id, setId] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = () => {
+    axios.post("http://52.78.154.108:3000/login", {
+      id,
+      password,
+    })
+    .then((response) => {
+      alert("로그인 성공!");
+    })
+    .catch((error) => {
+      alert("로그인 실패: " + error.response.data.message);
+    });
+  };
+
   return (
     <div className="login-container">
       <h2 className="login-title">로그인</h2>

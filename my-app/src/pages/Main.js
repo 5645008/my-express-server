@@ -12,18 +12,6 @@ function Main() {
   const [userData, setUserData] = useState(null); // 사용자 데이터 상태 추가
   const [error, setError] = useState(''); // 오류 상태 추가
 
-  const handleButtonClick = () => {
-    console.log('버튼 클릭됨'); // 로그 추가
-    axios.get('http://52.78.154.108:3000/users/asdf')
-      .then((response) => {
-        console.log('데이터 수신:', response.data); // 로그 추가
-        setUserData(response.data); // 받아온 데이터 저장
-      })
-      .catch((error) => {
-        console.error('데이터를 가져오는 데 실패했습니다:', error);
-      });
-  };
-  
   // 오류 메시지 출력
   {error && <p className="error-message">{error}</p>}
 
@@ -50,20 +38,6 @@ function Main() {
           </button>
         </Link>
       </div>
-
-      {/* DB 테스트용 버튼 */}
-      <button onClick={handleButtonClick}>DB에서 데이터 가져오기</button>
-
-      {/* 서버에서 받아온 데이터 출력 */}
-      {userData && (
-        <div>
-          <h3>데이터 결과</h3>
-          <p>아이디: {userData.u_id || '정보 없음'}</p>
-          <p>비밀번호: {userData.u_password || '정보 없음'}</p>
-          <p>이름: {userData.u_name || '정보 없음'}</p>
-          <p>나이: {userData.u_age || '정보 없음'}</p>
-        </div>
-      )}
 
       {/* 오늘의 약 정보 */}
       <div className="medication-card">
