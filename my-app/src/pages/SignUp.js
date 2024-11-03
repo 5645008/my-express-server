@@ -72,14 +72,14 @@ function SignUp() {
         {/* 아이디 입력 */}
         <div className="form-group">
           <label>아이디</label>
-          <input type="text" name="u_id" placeholder="아이디를 입력하세요" value={formData.user_id} onChange={handleChange} />
+          <input type="text" name="u_id" placeholder="아이디를 입력하세요" value={formData.u_id} onChange={handleChange} />
           <p className="error-message">아이디는 5~10자의 영소문자, 숫자만 입력 가능합니다.</p>
         </div>
 
         {/* 비밀번호 입력 */}
         <div className="form-group">
           <label>비밀번호</label>
-          <input type="password" name="password" placeholder="비밀번호를 입력하세요" value={formData.user_password} onChange={handleChange} />
+          <input type="password" name="password" placeholder="비밀번호를 입력하세요" value={formData.password} onChange={handleChange} />
           <p className="error-message">비밀번호는 8~16자의 영소문자, 숫자, 특수문자만 입력 가능합니다.</p>
         </div>
 
@@ -92,13 +92,13 @@ function SignUp() {
         {/* 연령 입력 */}
         <div className="form-group">
           <label>연령</label>
-          <input type="number" name="age" placeholder="나이를 입력하세요" value={formData.user_age} onChange={handleChange} />
+          <input type="number" name="age" placeholder="나이를 입력하세요" value={formData.age} onChange={handleChange} />
         </div>
 
         {/* 지병 입력 */}
         <div className="form-group">
           <label>지병</label>
-          <input type="text" name="disease" placeholder="지병을 입력하세요" value={formData.user_disease} onChange={handleChange} />
+          <input type="text" name="disease" placeholder="지병을 입력하세요" value={formData.disease} onChange={handleChange} />
         </div>
 
         {/* 성별 선택 */}

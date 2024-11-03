@@ -51,7 +51,7 @@ app.post('/api/signup', (req, res) => {
 });
 
 // 로그인 API
-app.post('/login', (req, res) => {
+app.post('/api/login', (req, res) => {
   const { user_id, user_password } = req.body;
   const query = 'SELECT * FROM user WHERE u_id = ? AND password = ?';
   db.query(query, [user_id, user_password], (err, results) => {
