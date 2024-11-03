@@ -12,8 +12,8 @@ function Login() {
     console.log("로그인 시도:", { id, password }); // 로그인 요청 전 데이터 확인
     
     axios.post("http://52.78.154.108:3000/api/login", {
-      user_id,
-      user_password,
+      id,
+      password,
     })
     .then((response) => {
       console.log("서버 응답:", response.data); // 서버 응답 데이터 확인
