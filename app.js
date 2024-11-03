@@ -38,7 +38,7 @@ db.connect((err) => {
 
 
 // 회원가입 API
-app.post('http://52.78.154.108:3000/api/signup', (req, res) => {
+app.post('/api/signup', (req, res) => {
   const { user_id, user_password, user_age, user_disease, user_gender } = req.body;
 
   const query = 'INSERT INTO user (user_id, user_password, user_age, user_disease, user_user_gender) VALUES (?, ?, ?, ?, ?)';
@@ -54,7 +54,7 @@ app.post('http://52.78.154.108:3000/api/signup', (req, res) => {
 });
 
 // 로그인 API
-app.post('http://52.78.154.108:3000/api/login', (req, res) => {
+app.post('/api/login', (req, res) => {
   const { user_id, user_password } = req.body;
   const query = 'SELECT * FROM user WHERE user_id = ? AND password = ?';
   db.query(query, [user_id, user_password], (err, results) => {
