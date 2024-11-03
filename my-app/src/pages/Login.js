@@ -1,4 +1,3 @@
-// src/pages/Login.js
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../css/Login.styled.css';
@@ -10,11 +9,14 @@ function Login() {
   const navigate = useNavigate(); // 로그인 성공 시 페이지 이동을 위한 네비게이트 훅
 
   const handleLogin = () => {
+    console.log("로그인 시도:", { id, password }); // 로그인 요청 전 데이터 확인
+    
     axios.post("http://52.78.154.108:3000/api/login", {
-      id,
-      password,
+      user_id,
+      user_password,
     })
     .then((response) => {
+      console.log("서버 응답:", response.data); // 서버 응답 데이터 확인
       if (response.data.success) {
         alert("로그인 성공!");
         navigate("/main"); // 로그인 성공 시 메인 페이지로 이동
@@ -23,6 +25,7 @@ function Login() {
       }
     })
     .catch((error) => {
+      console.error("로그인 요청 에러:", error); // 에러 상세 확인
       alert("로그인 실패: " + (error.response?.data?.message || "오류가 발생했습니다."));
     });
   };
