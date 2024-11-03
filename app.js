@@ -38,10 +38,10 @@ db.connect((err) => {
 
 
 // 회원가입 API
-app.post('/api/signup', (req, res) => {
+app.post('http://52.78.154.108:3000/api/signup', (req, res) => {
   const { user_id, user_password, user_age, user_disease, user_gender } = req.body;
 
-  const query = 'INSERT INTO user (u_id, password, age, disease, user_gender) VALUES (?, ?, ?, ?, ?)';
+  const query = 'INSERT INTO user (user_id, user_password, user_age, user_disease, user_user_gender) VALUES (?, ?, ?, ?, ?)';
   const values = [user_id, user_password, user_age, user_disease, user_gender];
 
   db.query(query, values, (error, results) => {
@@ -54,9 +54,9 @@ app.post('/api/signup', (req, res) => {
 });
 
 // 로그인 API
-app.post('/api/login', (req, res) => {
+app.post('http://52.78.154.108:3000/api/login', (req, res) => {
   const { user_id, user_password } = req.body;
-  const query = 'SELECT * FROM user WHERE u_id = ? AND password = ?';
+  const query = 'SELECT * FROM user WHERE user_id = ? AND password = ?';
   db.query(query, [user_id, user_password], (err, results) => {
       if (err) return res.status(500).json({ success: false, message: '로그인 실패' });
       if (results.length > 0) {
