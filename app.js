@@ -36,10 +36,10 @@ db.connect((err) => {
 
 // 회원가입 API
 app.post('/api/signup', (req, res) => {
-  const { u_id, password, age, disease, gender } = req.body;
+  const { user_id, user_password, user_age, user_disease, user_gender } = req.body;
 
   const query = 'INSERT INTO user (u_id, password, age, disease, user_gender) VALUES (?, ?, ?, ?, ?)';
-  const values = [u_id, password, age, disease, gender];
+  const values = [user_id, user_password, user_age, user_disease, user_gender];
 
   db.query(query, values, (error, results) => {
       if (error) {

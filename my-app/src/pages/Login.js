@@ -4,16 +4,16 @@ import '../css/Login.styled.css';
 import axios from 'axios';
 
 function Login() {
-  const [id, setId] = useState("");
-  const [password, setPassword] = useState("");
+  const [user_id, setId] = useState("");
+  const [user_password, setPassword] = useState("");
   const navigate = useNavigate(); // 로그인 성공 시 페이지 이동을 위한 네비게이트 훅
 
   const handleLogin = () => {
-    console.log("로그인 시도:", { id, password }); // 로그인 요청 전 데이터 확인
+    console.log("로그인 시도:", { user_id, user_password }); // 로그인 요청 전 데이터 확인
     
     axios.post("http://52.78.154.108:3000/api/login", {
-      id,
-      password,
+      user_id,
+      user_password,
     })
     .then((response) => {
       console.log("서버 응답:", response.data); // 서버 응답 데이터 확인
@@ -40,7 +40,7 @@ function Login() {
         <input 
           type="text" 
           placeholder="아이디를 입력하세요" 
-          value={id}
+          value={user_id}
           onChange={(e) => setId(e.target.value)} // 상태 업데이트
         />
       </div>
@@ -51,7 +51,7 @@ function Login() {
         <input 
           type="password" 
           placeholder="비밀번호를 입력하세요" 
-          value={password}
+          value={user_password}
           onChange={(e) => setPassword(e.target.value)} // 상태 업데이트
         />
       </div>
