@@ -29,7 +29,7 @@ function SignUp() {
     const selectedGender = e.target.value === 'male' ? '1' : '2';
     setFormData({
       ...formData,
-      gender: selectedGender
+      user_gender: selectedGender
     });
   };
 
@@ -37,7 +37,7 @@ function SignUp() {
     e.preventDefault();
 
     // 비밀번호와 비밀번호 확인 값이 일치하는지 검사
-    if (formData.password !== formData.confirmPassword) {
+    if (formData.user_password !== formData.confirmPassword) {
       setErrorMessage('비밀번호가 일치하지 않습니다.');
       return;
     }
@@ -69,51 +69,41 @@ function SignUp() {
       <h2 className="signup-title">회원가입</h2>
 
       <form onSubmit={handleSubmit}>
-        {/* 아이디 입력 */}
         <div className="form-group">
           <label>아이디</label>
-          <input type="text" name="u_id" placeholder="아이디를 입력하세요" value={formData.u_id} onChange={handleChange} />
-          <p className="error-message">아이디는 5~10자의 영소문자, 숫자만 입력 가능합니다.</p>
+          <input type="text" name="user_id" placeholder="아이디를 입력하세요" value={formData.user_id} onChange={handleChange} />
         </div>
 
-        {/* 비밀번호 입력 */}
         <div className="form-group">
           <label>비밀번호</label>
-          <input type="password" name="password" placeholder="비밀번호를 입력하세요" value={formData.password} onChange={handleChange} />
-          <p className="error-message">비밀번호는 8~16자의 영소문자, 숫자, 특수문자만 입력 가능합니다.</p>
+          <input type="password" name="user_password" placeholder="비밀번호를 입력하세요" value={formData.user_password} onChange={handleChange} />
         </div>
 
-        {/* 비밀번호 확인 입력 */}
         <div className="form-group">
           <label>비밀번호 확인</label>
           <input type="password" name="confirmPassword" placeholder="비밀번호를 다시 입력하세요" value={formData.confirmPassword} onChange={handleChange} />
         </div>
 
-        {/* 연령 입력 */}
         <div className="form-group">
           <label>연령</label>
-          <input type="number" name="age" placeholder="나이를 입력하세요" value={formData.age} onChange={handleChange} />
+          <input type="number" name="user_age" placeholder="나이를 입력하세요" value={formData.user_age} onChange={handleChange} />
         </div>
 
-        {/* 지병 입력 */}
         <div className="form-group">
           <label>지병</label>
-          <input type="text" name="disease" placeholder="지병을 입력하세요" value={formData.disease} onChange={handleChange} />
+          <input type="text" name="user_disease" placeholder="지병을 입력하세요" value={formData.user_disease} onChange={handleChange} />
         </div>
 
-        {/* 성별 선택 */}
         <div className="form-group">
           <label>성별</label>
-          <select value={formData.user_gender} onChange={handleGenderChange}>
-            <option value="male">남성</option>
-            <option value="female">여성</option>
+          <select name="user_gender" value={formData.user_gender} onChange={handleGenderChange}>
+            <option value="1">남성</option>
+            <option value="2">여성</option>
           </select>
         </div>
 
-        {/* 가입 버튼 */}
         <button type="submit" className="signup-button">가입하기</button>
 
-        {/* 오류 메시지 표시 */}
         {errorMessage && <p className="error-message">{errorMessage}</p>}
       </form>
     </div>
