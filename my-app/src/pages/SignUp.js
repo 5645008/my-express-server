@@ -42,7 +42,7 @@ function SignUp() {
         user_id: userId,
         user_password: userPassword,
         user_age: userAge,
-        user_disease: userDiseases,
+        user_disease: JSON.stringify(userDiseases),
         user_gender: userGender,
       });
 
