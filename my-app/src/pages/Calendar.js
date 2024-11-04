@@ -2,84 +2,182 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../css/Calendar.styled.css';
-import calendar from '../assets/calendar_image.png';
-import back from '../assets/back_arrow.png';
+import { Bell, Volume2, VolumeX, ArrowLeft } from 'lucide-react';
+import Calendar from 'react-calendar';
 
-function CalendarPage() {
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [daysInMonth, setDaysInMonth] = useState([]);
+const DAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
-  // 현재 날짜에 따른 일수 계산
+const CalendarPage = ({ goBack }) => {
+  const [medication, setMedication] = useState('');
+  const [time, setTime] = useState('');
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDays, setSelectedDays] = useState([]);
+  const [reminders, setReminders] = useState([]);
+
+  // 알림 권한 요청 로직
   useEffect(() => {
-    const year = selectedDate.getFullYear();
-    const month = selectedDate.getMonth();
+    if (Notification.permission === "denied") {
+      console.log("Notification permission denied. Removing and re-requesting.");
+    } else if (Notification.permission === "default") {
+      Notification.requestPermission().then(permission => {
+        console.log("Permission status after request:", permission);
+      });
+    } else {
+      console.log("Notification permission granted.");
+    }
+  }, []);
 
-    // 해당 월의 마지막 날짜 계산
-    const lastDayOfMonth = new Date(year, month + 1, 0).getDate();
-    
-    // 해당 월의 일 수 배열 생성
-    const daysArray = Array.from({ length: lastDayOfMonth }, (_, i) => i + 1);
-    setDaysInMonth(daysArray);
-  }, [selectedDate]);
+  useEffect(() => {
+    const savedReminders = localStorage.getItem('medicationReminders');
+    if (savedReminders) {
+      setReminders(JSON.parse(savedReminders).map(reminder => ({
+        ...reminder,
+        date: reminder.date ? new Date(reminder.date) : null
+      })));
+    }
+  }, []);
 
-  // 날짜가 선택되었을 때의 핸들러
-  const onDateClick = (day) => {
-    const newDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), day);
-    setSelectedDate(newDate);
+  useEffect(() => {
+    localStorage.setItem('medicationReminders', JSON.stringify(reminders));
+  }, [reminders]);
+
+  const showNotification = (title, body) => {
+    if (Notification.permission === 'granted') {
+      const notification = new Notification(title, {
+        body: body,
+        icon: '/medicine-icon.png'
+      });
+      notification.onclick = () => window.focus();
+    } else {
+      console.log("Notification permission not granted.");
+    }
   };
 
-  // 날짜를 "월 일 요일" 형식으로 한글로 변환
-  const formatDate = (date) => {
-    return date.toLocaleDateString('ko-KR', {
-      month: 'long',
-      day: 'numeric',
-      weekday: 'long',
+  const handleDaySelection = (dayIndex) => {
+    setSelectedDays(selectedDays.includes(dayIndex) 
+      ? selectedDays.filter(day => day !== dayIndex) 
+      : [...selectedDays, dayIndex]
+    );
+  };
+
+  const addReminder = () => {
+    if (medication && time && (selectedDate || selectedDays.length > 0)) {
+      const reminder = {
+        medication,
+        time,
+        date: selectedDate,
+        days: selectedDays,
+        soundEnabled: true,
+        id: Date.now()
+      };
+
+      setReminders([...reminders, reminder]);
+      setMedication('');
+      setTime('');
+      setSelectedDate(null);
+      setSelectedDays([]);
+      alert(`${medication} 알림이 설정되었습니다.`);
+    }
+  };
+
+  const deleteReminder = (id) => {
+    setReminders(reminders.filter(reminder => reminder.id !== id));
+    alert("알림이 삭제되었습니다.");
+  };
+
+  const toggleSound = (id) => {
+    setReminders(reminders.map(reminder => 
+      reminder.id === id ? { ...reminder, soundEnabled: !reminder.soundEnabled } : reminder
+    ));
+  };
+
+  const checkReminders = () => {
+    const now = new Date();
+    const currentTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const currentDay = now.getDay();
+
+    reminders.forEach(reminder => {
+      const reminderDate = new Date(reminder.date);
+      const isSameDate = reminderDate.getDate() === now.getDate() &&
+                         reminderDate.getMonth() === now.getMonth() &&
+                         reminderDate.getFullYear() === now.getFullYear();
+
+      if ((isSameDate || reminder.days.includes(currentDay)) && reminder.time === currentTime) {
+        showNotification("약 복용 시간", `${reminder.medication} 복용 시간입니다!`);
+      }
     });
   };
 
-  return (
-    <div className="calendar-page">
-      <header className="calendar-header">
-        <Link to="/"><img src={back} width='20px'></img></Link> {/* 메인 페이지로 돌아가기 */}
-        <h1>{formatDate(selectedDate)}</h1> {/* 선택된 날짜를 한글로 표시 */}
-        <button className="calendar-icon"><img src={calendar} width='25px'></img></button>
-      </header>
+  useEffect(() => {
+    const interval = setInterval(checkReminders, 10000);
+    return () => clearInterval(interval);
+  }, [reminders]);
 
-      {/* 간단한 캘린더 렌더링 */}
-      <div className="calendar">
-        <div className="days-header">
-          <div>일</div>
-          <div>월</div>
-          <div>화</div>
-          <div>수</div>
-          <div>목</div>
-          <div>금</div>
-          <div>토</div>
+  return (
+    <div className="container">
+      <div className="header">
+        <button onClick={goBack} className="back-button">
+          <ArrowLeft size={20} />
+        </button>
+        <h1 className="title">MOYAK</h1>
+      </div>
+
+      <div className="reminder-form">
+        <input
+          type="text"
+          placeholder="약 이름을 입력하세요"
+          value={medication}
+          onChange={(e) => setMedication(e.target.value)}
+          className="input"
+        />
+        <input
+          type="time"
+          value={time}
+          onChange={(e) => setTime(e.target.value)}
+          className="input"
+        />
+        <div className="space-y-2">
+          <label className="text-sm font-medium">캘린더에서 날짜 선택</label>
+          <Calendar
+            onChange={setSelectedDate}
+            value={selectedDate}
+            className="calendar"
+          />
         </div>
-        <div className="days-grid">
-          {daysInMonth.map(day => (
-            <div
-              key={day}
-              className={`day ${day === selectedDate.getDate() ? 'selected' : ''} ${day === new Date().getDate() && selectedDate.getMonth() === new Date().getMonth() ? 'today' : ''}`}
-              onClick={() => onDateClick(day)}
-            >
+        <div className="weekday-selection">
+          {DAYS.map((day, index) => (
+            <div key={index} className={`day ${selectedDays.includes(index) ? 'selected' : ''}`} onClick={() => handleDaySelection(index)}>
               {day}
             </div>
           ))}
         </div>
+        <button onClick={addReminder} className="add-button">알림 추가</button>
       </div>
 
-      {/* 알림표 */}
-      <div className="notification-list">
-        <h2>알림표</h2>
-        <ul>
-          <li>오전 10시 - 페니라민정</li>
-          <li>오후 2시 - 암브로콜정</li>
-          <li>오후 9시 - 프리비투스 현탁액</li>
-        </ul>
+      <div className="reminders-list">
+        <h2 className="reminders-title">등록된 알림</h2>
+        {reminders.length === 0 ? (
+          <p className="no-reminders">등록된 알림이 없습니다</p>
+        ) : (
+          reminders.map((reminder) => (
+            <div key={reminder.id} className="reminder-item">
+              <div className="reminder-details">
+                <Bell size={16} className="bell-icon" />
+                <span>{reminder.medication}</span>
+                <span className="reminder-time">
+                  {reminder.days.length === 7 ? '매일' : reminder.days.length > 0 ? reminder.days.map(dayIndex => DAYS[dayIndex]).join(', ') : reminder.date ? new Date(reminder.date).toLocaleDateString() : '매주'} {reminder.time}
+                </span>
+              </div>
+              <button onClick={() => deleteReminder(reminder.id)} className="delete-button">삭제</button>
+              <button onClick={() => toggleSound(reminder.id)} className="sound-button">
+                {reminder.soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
+              </button>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
-}
+};
 
 export default CalendarPage;

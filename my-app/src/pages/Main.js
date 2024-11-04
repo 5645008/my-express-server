@@ -1,6 +1,5 @@
 // src/pages/Main.js
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
 import '../css/Main.styled.css';
 import camera from '../assets/camera.png';
@@ -9,11 +8,6 @@ import glass from '../assets/reading_glasses.png';
 
 function Main() {
   const [today, setToday] = useState('');
-  const [userData, setUserData] = useState(null); // 사용자 데이터 상태 추가
-  const [error, setError] = useState(''); // 오류 상태 추가
-
-  // 오류 메시지 출력
-  {error && <p className="error-message">{error}</p>}
 
   // 현재 날짜를 가져와서 YYYY-MM-DD 형식으로 설정
   useEffect(() => {
@@ -60,10 +54,12 @@ function Main() {
         </Link>
 
         {/* 사진 검색 버튼 */}
-        <button className="camera-button">
-          <span className="camera-icon"><img src={camera} width='50px'/></span>
-          <span>사진 검색</span> {/* 아이콘 아래 텍스트 출력 */}
-        </button>
+        <Link to="/ScanQR">
+          <button className="camera-button">
+            <span className="camera-icon"><img src={camera} width='50px'/></span>
+            <span>사진 검색</span> {/* 아이콘 아래 텍스트 출력 */}
+          </button>
+        </Link>
       </div>
     </div>
   );
