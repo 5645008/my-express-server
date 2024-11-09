@@ -33,7 +33,7 @@ const db = mysql.createPool({
 
 
 // MySQL 연결 테스트
-db.connect((err) => {
+db.query('SELECT 1', (err, results) => {
   if (err) {
     console.error('MySQL 연결 실패:', err);
   } else {
