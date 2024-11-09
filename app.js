@@ -18,14 +18,19 @@ app.set("port", process.env.PORT || 3000);
 // 빌드된 React 정적 파일 제공
 app.use(express.static(path.join(__dirname, "my-app/build")));
 
-// MySQL 데이터베이스 연결 설정
-const db = mysql.createConnection({
-  host: '52.78.154.108',           // EC2 서버에서 MySQL이 실행 중인 경우 'localhost'
+// MySQL 데이터베이스 연결 풀 설정
+const db = mysql.createPool({
+  host: '52.78.154.108',       // EC2 서버에서 MySQL이 실행 중인 경우 'localhost'
   port: '3306',                // MySQL 포트번호
   user: 'user',                // MySQL 사용자 이름
   password: '0000',            // MySQL 비밀번호
-  database: 'my_database'      // 연결할 데이터베이스 이름
+  database: 'my_database',     // 연결할 데이터베이스 이름
+  waitForConnections: true,    // 연결을 기다리도록 설정
+  connectionLimit: 10,         // 최대 연결 수
+  queueLimit: 0                // 대기열 제한 없음 (0으로 설정 시 무제한)
 });
+
+
 
 // MySQL 연결 테스트
 db.connect((err) => {
