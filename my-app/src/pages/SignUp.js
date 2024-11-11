@@ -9,6 +9,7 @@ function SignUp() {
   const [userId, setUserId] = useState('');
   const [userPassword, setUserPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [userName, setUserName] = useState('');
   const [userAge, setUserAge] = useState('');
   const [userDiseases, setUserDiseases] = useState([]);
   const [showDiseaseOptions, setShowDiseaseOptions] = useState(false); // 지병 목록 표시 상태
@@ -36,16 +37,16 @@ function SignUp() {
       setErrorMessage('비밀번호가 일치하지 않습니다.');
       return;
     }
-
+  
     try {
       const response = await axios.post('http://52.78.154.108:3000/api/signup', {
         user_id: userId,
         user_password: userPassword,
-        user_age: userAge,
-        user_disease: JSON.stringify(userDiseases),
+        user_age: parseInt(userAge), // 나이를 int 형식으로 변환
+        user_disease: userDiseases,
         user_gender: userGender,
       });
-
+  
       if (response.data.success) {
         alert(response.data.message);
         navigate('/login');
@@ -55,7 +56,7 @@ function SignUp() {
     } catch (error) {
       setErrorMessage('서버와의 통신에 문제가 발생했습니다.');
     }
-  };
+  };  
 
   return (
     <div className="signup-container">
@@ -100,7 +101,17 @@ function SignUp() {
       </div>
 
       <div className="form-group">
-        <label>연령</label>
+        <label>이름</label>
+        <input
+          type="text"
+          placeholder="이름을 입력하세요"
+          value={userName}
+          onChange={(e) => setUserName(e.target.value)}
+        />
+      </div>
+
+      <div className="form-group">
+        <label>나이</label>
         <input
           type="number"
           placeholder="나이를 입력하세요"

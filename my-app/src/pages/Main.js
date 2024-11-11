@@ -8,6 +8,7 @@ import glass from '../assets/reading_glasses.png';
 
 function Main() {
   const [today, setToday] = useState('');
+  const [todayMedications, setTodayMedications] = useState([]);
 
   // 현재 날짜를 가져와서 YYYY-MM-DD 형식으로 설정
   useEffect(() => {
@@ -17,18 +18,27 @@ function Main() {
     const day = String(currentDate.getDate()).padStart(2, '0');
     const formattedDate = `${year}-${month}-${day}`;
     setToday(formattedDate);
+
+    // 로컬 스토리지에서 알림 목록 가져와서 오늘의 알림만 필터링
+    const savedReminders = JSON.parse(localStorage.getItem('medicationReminders')) || [];
+    const todayReminders = savedReminders.filter(reminder => {
+      const reminderDate = new Date(reminder.date);
+      const isToday = reminderDate.toDateString() === currentDate.toDateString();
+      return isToday || reminder.days.includes(currentDate.getDay());
+    });
+    setTodayMedications(todayReminders.map(reminder => reminder.medication));
   }, []);
 
   return (
     <div className="main">
       {/* 상단 사용자 정보 및 날짜 */}
       <div className="header">
-        <span>홍길동 님</span>
+        <span>김철수 님</span>
         <span>{today}</span> {/* 오늘 날짜를 표시 */}
         {/* 캘린더 아이콘을 클릭하면 캘린더 페이지로 이동 */}
         <Link to="/calendar">
           <button className="calendar-button">
-            <span className="calendar-icon"><img src={calendar} width='30px'/></span>
+            <span className="calendar-icon"><img src={calendar} width='30px' alt="Calendar" /></span>
           </button>
         </Link>
       </div>
@@ -37,9 +47,11 @@ function Main() {
       <div className="medication-card">
         <h2>오늘</h2>
         <div className="medication-list">
-          <p>페니라민정</p>
-          <p>암브로콜정</p>
-          <p>프리비투스 현탁액</p>
+          {todayMedications.length > 0 ? (
+            todayMedications.map((medication, index) => <p key={index}>{medication}</p>)
+          ) : (
+            <p>오늘 복용할 약이 없습니다.</p>
+          )}
         </div>
       </div>
 
@@ -48,15 +60,15 @@ function Main() {
         {/* 약 검색 버튼 */}
         <Link to="/search">
           <button className="search-button">
-            <span className="search-icon"><img src={glass} width='50px'/></span>
+            <span className="search-icon"><img src={glass} width='50px' alt="Search" /></span>
             <span>약 검색</span> {/* 아이콘 아래 텍스트 출력 */}
           </button>
         </Link>
 
         {/* 사진 검색 버튼 */}
-        <Link to="/test"> {/* 경로를 /test로 수정 */}
+        <Link to="/ScanQR">
           <button className="camera-button">
-            <span className="camera-icon"><img src={camera} width='50px'/></span>
+            <span className="camera-icon"><img src={camera} width='50px' alt="Camera" /></span>
             <span>사진 검색</span> {/* 아이콘 아래 텍스트 출력 */}
           </button>
         </Link>

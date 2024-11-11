@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import '../css/Calendar.styled.css';
 import { Bell, Volume2, VolumeX, ArrowLeft } from 'lucide-react';
 import Calendar from 'react-calendar';
+import back from '../assets/back_arrow.png';
+import 'react-calendar/dist/Calendar.css';
 
 const DAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -27,6 +29,7 @@ const CalendarPage = ({ goBack }) => {
     }
   }, []);
 
+  // 로컬 스토리지에서 알림 목록 불러오기
   useEffect(() => {
     const savedReminders = localStorage.getItem('medicationReminders');
     if (savedReminders) {
@@ -37,6 +40,7 @@ const CalendarPage = ({ goBack }) => {
     }
   }, []);
 
+  // 알림 목록을 로컬 스토리지에 저장
   useEffect(() => {
     localStorage.setItem('medicationReminders', JSON.stringify(reminders));
   }, [reminders]);
@@ -68,9 +72,10 @@ const CalendarPage = ({ goBack }) => {
         date: selectedDate,
         days: selectedDays,
         soundEnabled: true,
+        notified: false, // 알림 발송 여부 초기화
         id: Date.now()
       };
-
+  
       setReminders([...reminders, reminder]);
       setMedication('');
       setTime('');
@@ -95,17 +100,22 @@ const CalendarPage = ({ goBack }) => {
     const now = new Date();
     const currentTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const currentDay = now.getDay();
-
-    reminders.forEach(reminder => {
-      const reminderDate = new Date(reminder.date);
-      const isSameDate = reminderDate.getDate() === now.getDate() &&
-                         reminderDate.getMonth() === now.getMonth() &&
-                         reminderDate.getFullYear() === now.getFullYear();
-
-      if ((isSameDate || reminder.days.includes(currentDay)) && reminder.time === currentTime) {
-        showNotification("약 복용 시간", `${reminder.medication} 복용 시간입니다!`);
-      }
-    });
+  
+    setReminders(prevReminders => 
+      prevReminders.map(reminder => {
+        const reminderDate = new Date(reminder.date);
+        const isSameDate = reminderDate.getDate() === now.getDate() &&
+                           reminderDate.getMonth() === now.getMonth() &&
+                           reminderDate.getFullYear() === now.getFullYear();
+  
+        // 알림이 아직 울리지 않았고, 조건에 부합할 때만 알림 발송
+        if (!reminder.notified && (isSameDate || reminder.days.includes(currentDay)) && reminder.time <= currentTime) {
+          showNotification("약 복용 시간", `${reminder.medication} 복용 시간입니다!`);
+          return { ...reminder, notified: true }; // 알림 발송 여부를 true로 설정
+        }
+        return reminder;
+      })
+    );
   };
 
   useEffect(() => {
@@ -116,10 +126,8 @@ const CalendarPage = ({ goBack }) => {
   return (
     <div className="container">
       <div className="header">
-        <button onClick={goBack} className="back-button">
-          <ArrowLeft size={20} />
-        </button>
-        <h1 className="title">MOYAK</h1>
+        <Link to="/"><img src={back} width='20px' alt="back"/></Link>
+        <h1 className="title">알림</h1>
       </div>
 
       <div className="reminder-form">
