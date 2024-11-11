@@ -26,7 +26,7 @@ function TextSearch() {
     <div className="text-search-page">
       <header className="search-header">
         {/* 메인 페이지로 돌아가기 버튼 */}
-        <Link to="/"><img src={back} width='20px' alt="back"/></Link>
+        <Link to="/main"><img src={back} width='20px' alt="back"/></Link>
         <input 
           type="text" 
           placeholder="약 이름을 입력하세요." 

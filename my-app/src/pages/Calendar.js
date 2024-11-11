@@ -126,7 +126,7 @@ const CalendarPage = ({ goBack }) => {
   return (
     <div className="container">
       <div className="header">
-        <Link to="/"><img src={back} width='20px' alt="back"/></Link>
+        <Link to="/main"><img src={back} width='20px' alt="back"/></Link>
         <h1 className="title">알림</h1>
       </div>
 
