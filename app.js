@@ -73,6 +73,24 @@ app.post('/api/login', (req, res) => {
   });
 });
 
+//main화면 이름 가져오는 API
+app.get('/api/get-username', (req, res) => {
+  const { user_id } = req.query;
+  console.log('Received request for user_id:', user_id);  // 요청 확인
+
+  const query = 'SELECT user_name FROM user WHERE user_id = ?';
+  db.query(query, [user_id], (err, results) => {
+    if (err) {
+      res.status(500).send('서버 오류');
+    } else {
+      if (results.length > 0) {
+        res.json({ success: true, user_name: results[0].user_name });
+      } else {
+        res.json({ success: false, message: '사용자 이름을 찾을 수 없습니다.' });
+      }
+    }
+  });
+});
 
 
 // 기본 경로에서 빌드된 index.html 파일 제공
