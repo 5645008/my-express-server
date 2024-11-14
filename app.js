@@ -66,7 +66,7 @@ app.post('/api/login', (req, res) => {
   db.query(query, [user_id, user_password], (err, results) => {
       if (err) return res.status(500).json({ success: false, message: '로그인 실패' });
       if (results.length > 0) {
-          res.json({ success: true, message: '로그인 성공' });
+        res.json({ success: true, message: '로그인 성공', user_id: results[0].user_id });  // user_id 추가
       } else {
           res.json({ success: false, message: '아이디 또는 비밀번호가 일치하지 않습니다.' });
       }
