@@ -18,7 +18,6 @@ function Login() {
       });
 
       if (response.data.success) {
-        alert(response.data.message); // 로그인 성공 메시지
         navigate('/main'); // 홈 페이지로 이동
       } else {
         setErrorMessage(response.data.message); // 로그인 실패 메시지 설정
