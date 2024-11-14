@@ -34,6 +34,7 @@ function Main() {
     const fetchUserName = async () => {
       try {
         const user_id = localStorage.getItem('user_id');  // 로그인 시 저장된 u_id 가져옴
+        console.log("Fetched user_id from localStorage:", user_id);  // user_id를 콘솔에 출력
 
         if (user_id) {
           const response = await axios.get('http://52.78.154.108:3000/api/get-username', {

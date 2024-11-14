@@ -18,6 +18,7 @@ function Login() {
       });
 
       if (response.data.success) {
+        console.log("Saving user_id to localStorage:", response.data.user_id);  // 저장 전에 콘솔에 확인
         localStorage.setItem('user_id', response.data.user_id);  // 서버에서 받은 user_id 저장
         navigate('/main'); // 홈 페이지로 이동
       } else {
