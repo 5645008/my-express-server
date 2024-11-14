@@ -76,7 +76,6 @@ app.post('/api/login', (req, res) => {
 //main화면 이름 가져오는 API
 app.get('/api/get-username', (req, res) => {
   const { user_id } = req.query;
-  console.log('Received request for user_id:', user_id);  // 요청 확인
 
   const query = 'SELECT user_name FROM user WHERE user_id = ?';
   db.query(query, [user_id], (err, results) => {
