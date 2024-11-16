@@ -6,8 +6,14 @@ const Camera = ({ onCapture }) => {
   const webcamRef = useRef(null);
 
   const captureImage = () => {
+    console.log('Capture button clicked');
     const imageSrc = webcamRef.current.getScreenshot();
-    onCapture(imageSrc);
+    if (imageSrc) {
+      console.log('Captured Image:', imageSrc);
+      onCapture(imageSrc);
+    } else {
+      console.error('Failed to capture image. webcamRef is null or not ready.');
+    }
   };
 
   return (
