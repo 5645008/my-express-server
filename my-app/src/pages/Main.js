@@ -94,7 +94,7 @@ function Main() {
         </Link>
 
         {/* 사진 검색 버튼 */}
-        <Link to="/test">
+        <Link to="/text-scan">
           <button className="camera-button">
             <span className="camera-icon"><img src={camera} width='50px' alt="Camera" /></span>
             <span>사진 검색</span> {/* 아이콘 아래 텍스트 출력 */}
