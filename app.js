@@ -1,51 +1,71 @@
+const fs = require("fs");
+const https = require("https");
 const express = require("express");
 const path = require("path");
-const mysql = require("mysql2");  // MySQL 모듈 불러오기
-const cors = require('cors'); // cors 패키지 불러오기
+const mysql = require("mysql2");
+const cors = require('cors');
 const bodyParser = require("body-parser");
-const session = require('express-session'); // 세션 패키지 추가
+const session = require('express-session');
 
 const app = express();
-// CORS 설정 (특정 도메인만 허용하고, 쿠키와 인증 정보를 포함한 요청을 허용)
+
+// CORS 설정 (HTTPS에서만 요청을 허용)
 app.use(cors({
-  origin: ['https://moyak.store', 'https://www.moyak.store'],  // 허용할 도메인
+  origin: ['https://moyak.store', 'https://www.moyak.store'],
   methods: ['GET', 'POST'],
-  credentials: true, // 쿠키를 포함하려면 true 설정
+  credentials: true,   // 쿠키 포함 요청 허용
 }));
+
 app.use(session({
-  secret: 'your-secret', // 세션을 암호화하는 키
+  secret: 'your-secret',
   resave: false,
   saveUninitialized: true,
   cookie: {
-    httpOnly: true,  // JavaScript에서 쿠키를 접근하지 못하게 설정
-    secure: true,    // HTTPS에서만 작동하도록 설정
-    sameSite: 'None', // 크로스 도메인에서 쿠키 사용
+    httpOnly: true,
+    secure: true,   // HTTPS에서만 작동
+    sameSite: 'None',
   }
 }));
 
-app.use(express.json());  // JSON 요청을 처리할 수 있도록 설정
+app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// 포트 설정 (3000번 포트를 기본값으로 사용)
-app.set("port", process.env.PORT || 3000);
-
-// 빌드된 React 정적 파일 제공
-app.use(express.static(path.join(__dirname, "my-app/build")));
-
-// MySQL 데이터베이스 연결 풀 설정
+// MySQL 연결 풀 설정
 const db = mysql.createPool({
-  host: '52.78.154.108',       // EC2 서버에서 MySQL이 실행 중인 경우 'localhost'
-  port: '3306',                // MySQL 포트번호
-  user: 'user',                // MySQL 사용자 이름
-  password: '0000',            // MySQL 비밀번호
-  database: 'my_database',     // 연결할 데이터베이스 이름
-  waitForConnections: true,    // 연결을 기다리도록 설정
-  connectionLimit: 10,         // 최대 연결 수
-  queueLimit: 0                // 대기열 제한 없음 (0으로 설정 시 무제한)
+  host: '52.78.154.108',
+  port: '3306',
+  user: 'user',
+  password: '0000',
+  database: 'my_database',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
+// 인증서 파일 경로
+const privateKey = fs.readFileSync('/etc/letsencrypt/live/moyak.store/privkey.pem', 'utf8');
+const certificate = fs.readFileSync('/etc/letsencrypt/live/moyak.store/cert.pem', 'utf8');
+const ca = fs.readFileSync('/etc/letsencrypt/live/moyak.store/chain.pem', 'utf8');
 
+const credentials = { key: privateKey, cert: certificate, ca: ca };
+
+// HTTPS 서버 실행
+https.createServer(credentials, app).listen(443, () => {
+  console.log('HTTPS 서버가 443번 포트에서 실행 중...');
+});
+
+// HTTP 요청을 HTTPS로 리다이렉션
+const http = require('http');
+http.createServer((req, res) => {
+  res.writeHead(301, { "Location": `https://${req.headers.host}${req.url}` });
+  res.end();
+}).listen(80, () => {
+  console.log('HTTP 요청을 HTTPS로 리다이렉션 중...');
+});
+
+// React 정적 파일 제공
+app.use(express.static(path.join(__dirname, "my-app/build")));
 
 // MySQL 연결 테스트
 db.query('SELECT 1', (err, results) => {
@@ -55,7 +75,6 @@ db.query('SELECT 1', (err, results) => {
     console.log('MySQL에 성공적으로 연결되었습니다.');
   }
 });
-
 
 // 회원가입 API
 app.post('/api/signup', (req, res) => {
@@ -81,14 +100,14 @@ app.post('/api/login', (req, res) => {
   db.query(query, [user_id, user_password], (err, results) => {
       if (err) return res.status(500).json({ success: false, message: '로그인 실패' });
       if (results.length > 0) {
-        res.json({ success: true, message: '로그인 성공', user_id: results[0].user_id });  // user_id 추가
+        res.json({ success: true, message: '로그인 성공', user_id: results[0].user_id });
       } else {
           res.json({ success: false, message: '아이디 또는 비밀번호가 일치하지 않습니다.' });
       }
   });
 });
 
-//main화면 이름 가져오는 API
+// main화면 이름 가져오는 API
 app.get('/api/get-username', (req, res) => {
   const { user_id } = req.query;
 
@@ -105,7 +124,6 @@ app.get('/api/get-username', (req, res) => {
     }
   });
 });
-
 
 // 기본 경로에서 빌드된 index.html 파일 제공
 app.get("/", (req, res) => {
