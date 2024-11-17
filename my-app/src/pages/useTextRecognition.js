@@ -1,4 +1,4 @@
-// hooks/useTextRecognition.js
+// useTextRecognition.js
 import { useState } from 'react';
 import axios from 'axios';
 import { GOOGLE_CLOUD_VISION_API_KEY } from '../config/config';

@@ -1,4 +1,4 @@
-// components/ImagePreview.js
+// ImagePreview.js
 import React from 'react';
 
 const ImagePreview = ({ image }) => {

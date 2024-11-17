@@ -3,11 +3,26 @@ const path = require("path");
 const mysql = require("mysql2");  // MySQL 모듈 불러오기
 const cors = require('cors'); // cors 패키지 불러오기
 const bodyParser = require("body-parser");
+const session = require('express-session'); // 세션 패키지 추가
 
 const app = express();
+// CORS 설정 (특정 도메인만 허용하고, 쿠키와 인증 정보를 포함한 요청을 허용)
 app.use(cors({
-  origin: '*'  // 모든 도메인에서의 요청을 허용
+  origin: ['https://moyak.store', 'https://www.moyak.store'],  // 허용할 도메인
+  methods: ['GET', 'POST'],
+  credentials: true, // 쿠키를 포함하려면 true 설정
 }));
+app.use(session({
+  secret: 'your-secret', // 세션을 암호화하는 키
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    httpOnly: true,  // JavaScript에서 쿠키를 접근하지 못하게 설정
+    secure: true,    // HTTPS에서만 작동하도록 설정
+    sameSite: 'None', // 크로스 도메인에서 쿠키 사용
+  }
+}));
+
 app.use(express.json());  // JSON 요청을 처리할 수 있도록 설정
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
