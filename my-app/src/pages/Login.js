@@ -12,7 +12,7 @@ function Login() {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://52.78.154.108:3000/api/login', {
+      const response = await axios.post('https://moyak.store/api/login', {
         user_id: userId,
         user_password: userPassword,
       });

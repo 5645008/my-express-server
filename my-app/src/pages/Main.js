@@ -36,7 +36,7 @@ function Main() {
         const user_id = localStorage.getItem('user_id');  // 로그인 시 저장된 u_id 가져옴
 
         if (user_id) {
-          const response = await axios.get('http://52.78.154.108:3000/api/get-username', {
+          const response = await axios.get('https://moyak.store/api/get-username', {
             params: { user_id }
           });
 
