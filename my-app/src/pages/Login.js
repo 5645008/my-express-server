@@ -1,4 +1,3 @@
-// src/pages/Login.js
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../css/Login.styled.css';
@@ -11,6 +10,11 @@ function Login() {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
+    if (!userId || !userPassword) {
+      setErrorMessage('아이디와 비밀번호를 입력해주세요.');
+      return;
+    }
+
     try {
       const response = await axios.post('https://moyak.store/api/login', {
         user_id: userId,

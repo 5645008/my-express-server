@@ -125,6 +125,46 @@ app.get('/api/get-username', (req, res) => {
   });
 });
 
+// 검색 예측 API
+app.get('/api/search', (req, res) => {
+  const searchTerm = req.query.term;
+  if (!searchTerm) {
+    return res.status(400).json({ error: 'Search term is required' });
+  }
+
+  const query = `SELECT itemName FROM medicine WHERE itemName LIKE ? LIMIT 10`;
+  db.query(query, [`%${searchTerm}%`], (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: 'Database query error' });
+    }
+    res.json(results.map(row => row.itemName));
+  });
+});
+
+// 약 정보 가져오기 API
+app.get('/api/medicine', (req, res) => {
+  const { name } = req.query;
+
+  if (!name) {
+    return res.status(400).json({ error: '약 이름이 필요합니다.' });
+  }
+
+  const query = `SELECT itemName, efcyQesitm FROM medicine WHERE itemName = ? LIMIT 1`;
+  db.query(query, [name], (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: 'Database query error' });
+    }
+
+    if (results.length > 0) {
+      res.json(results[0]); // 약의 정보 반환
+    } else {
+      res.status(404).json({ error: '약 정보를 찾을 수 없습니다.' });
+    }
+  });
+});
+
+
+
 // 기본 경로에서 빌드된 index.html 파일 제공
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "/my-app/build/index.html"));
