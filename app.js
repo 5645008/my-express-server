@@ -167,10 +167,10 @@ app.get('/api/medicine', (req, res) => {
 app.post('/api/medicine/search', (req, res) => {
   const text = req.body.text;
 
-  // 텍스트에서 키워드 추출 (공백으로 단어 구분)
+  // 공백으로 단어 구분
   const keywords = text.split(/\s+/).filter(word => word.trim().length > 0);
 
-  // SQL 쿼리 생성 (단어별 조건 추가)
+  // 단어별 조건 추가
   const placeholders = keywords.map(() => 'itemName LIKE ?').join(' OR ');
   const query = `
     SELECT itemName, efcyQesitm
@@ -179,17 +179,15 @@ app.post('/api/medicine/search', (req, res) => {
     LIMIT 10
   `;
 
-  // LIKE 조건에 맞게 키워드 변환
+  // LIKE 에 맞게 키워드 변환코드
   const params = keywords.map(keyword => `%${keyword}%`);
 
-  // 데이터베이스 쿼리 실행
   db.query(query, params, (err, results) => {
     if (err) {
       console.error('Database query error:', err);
       return res.status(500).json({ error: '데이터베이스 조회 중 오류가 발생했습니다.' });
     }
 
-    // 결과 반환
     if (results.length > 0) {
       res.json({ matchedMedicines: results });
     } else {

@@ -1,45 +1,107 @@
 .text-search-page {
-    padding-left: 20px;
-  }
-  
-  /* 상단 검색창 스타일 */
-  .search-input {
-    width: 70%;
-    padding: 10px;
-    font-size: 16px;
-    border-radius: 30px;
-    border: 1px solid #ccc;
-    margin: 0 10px;
-  }
-  
-  /* 검색 버튼 스타일 */
-  .search-icon {
-    background-color: #fff;
-    border: none;
-    cursor: pointer;
-    margin-top: 30px;
-    margin-bottom: 10px;
-  }
-  
-  /* 최근 검색어 버튼 스타일 */
-  .recent-search {
-    background-color: #f8f8f8;
-    padding: 8px 16px;
-    margin-right: 10px; /* 검색어 사이 간격 */
-    border-radius: 20px;
-    border: 1px solid #ccc;
-    cursor: pointer;
-    font-size: 14px;
-  }
-  
-  /* 인기 검색어 스타일 */
-  .popular-searches ol {
-    padding-left: 0;
-    list-style-position: inside;
-  }
-  
-  .popular-searches li {
-    margin-bottom: 10px;
-    padding-left: 20px;
-  }
-  
+  padding-left: 20px;
+}
+
+/* 상단 검색창 스타일 */
+.search-input {
+  width: 70%;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 30px;
+  border: 1px solid #ccc;
+  margin: 0 10px;
+}
+
+/* 검색 버튼 스타일 */
+.search-icon {
+  background-color: #fff;
+  border: none;
+  cursor: pointer;
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+
+/* 최근 검색어 버튼 스타일 */
+.recent-search {
+  background-color: #f8f8f8;
+  padding: 8px 16px;
+  margin-right: 10px; /* 검색어 사이 간격 */
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* 인기 검색어 스타일 */
+.popular-searches ol {
+  padding-left: 0;
+  list-style-position: inside;
+}
+
+.popular-searches li {
+  margin-bottom: 10px;
+  padding-left: 20px;
+}
+
+/* 검색 예측 드롭다운 스타일 */
+.suggestions-list {
+  position: absolute;
+  top: 70px; /* 검색창 바로 아래 위치 */
+  left: 20px; /* 검색창 위치에 맞추기 */
+  width: 70%; /* 검색창 너비와 동일하게 설정 */
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  max-height: 200px;
+  overflow-y: auto; /* 스크롤 가능 */
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+/* 검색 예측 항목 스타일 */
+.suggestion-item {
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+}
+
+.suggestion-item:hover {
+  background-color: #f0f0f0;
+}
+
+/* 검색창이 없는 경우 예측 드롭다운 숨김 */
+.suggestions-list.hidden {
+  display: none;
+}
+
+/* 약 정보 창 스타일 */
+.medicine-info {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 400px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  text-align: center;
+  z-index: 1000;
+}
+
+.medicine-info h3 {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.medicine-info p {
+  font-size: 14px;
+  color: #555;
+}
