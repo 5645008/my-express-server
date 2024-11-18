@@ -163,6 +163,39 @@ app.get('/api/medicine', (req, res) => {
   });
 });
 
+//텍스트스캔-매칭되는의약품
+app.post('/api/medicine/search', (req, res) => {
+  const { text } = req.body;
+
+  if (!text) {
+    return res.status(400).json({ error: '스캔된 텍스트가 필요합니다.' });
+  }
+
+  // 텍스트에서 키워드 추출 (예: 단어별 검색)
+  const keywords = text.split(' ').map(word => `%${word}%`); // 단어마다 LIKE 검색
+  const placeholders = keywords.map(() => 'itemName LIKE ?').join(' OR '); // 조건 생성
+
+  const query = `
+    SELECT itemName, efcyQesitm
+    FROM medicine
+    WHERE ${placeholders}
+    LIMIT 10
+  `;
+
+  db.query(query, keywords, (err, results) => {
+    if (err) {
+      console.error('Database query error:', err);
+      return res.status(500).json({ error: 'Database query error' });
+    }
+
+    if (results.length > 0) {
+      res.json({ matchedMedicines: results }); // 매칭된 의약품 리스트 반환
+    } else {
+      res.status(404).json({ error: '매칭되는 의약품이 없습니다.' });
+    }
+  });
+});
+
 
 
 // 기본 경로에서 빌드된 index.html 파일 제공
