@@ -163,30 +163,33 @@ app.get('/api/medicine', (req, res) => {
   });
 });
 
+// 의약품 매칭 API
 app.post('/api/medicine/search', (req, res) => {
-  const { text } = req.body;
+  const text = req.body.text;
 
-  if (!text) {
-    return res.status(400).json({ error: '스캔된 텍스트가 필요합니다.' });
-  }
+  // 텍스트에서 키워드 추출 (공백으로 단어 구분)
+  const keywords = text.split(/\s+/).filter(word => word.trim().length > 0);
 
-  // 텍스트 정제 (불필요한 특수문자 제거, 공백 정리 등)
-  const cleanedText = text.replace(/[^가-힣\s]/g, '').trim();  // 한글만 남기고 특수문자 제거
-
-  // MySQL Full-Text Search를 위한 쿼리
+  // SQL 쿼리 생성 (단어별 조건 추가)
+  const placeholders = keywords.map(() => 'itemName LIKE ?').join(' OR ');
   const query = `
     SELECT itemName, efcyQesitm
     FROM medicine
-    WHERE MATCH(itemName) AGAINST (? IN NATURAL LANGUAGE MODE)
+    WHERE ${placeholders}
     LIMIT 10
   `;
 
-  db.query(query, [cleanedText], (err, results) => {
+  // LIKE 조건에 맞게 키워드 변환
+  const params = keywords.map(keyword => `%${keyword}%`);
+
+  // 데이터베이스 쿼리 실행
+  db.query(query, params, (err, results) => {
     if (err) {
       console.error('Database query error:', err);
-      return res.status(500).json({ error: 'Database query error' });
+      return res.status(500).json({ error: '데이터베이스 조회 중 오류가 발생했습니다.' });
     }
 
+    // 결과 반환
     if (results.length > 0) {
       res.json({ matchedMedicines: results });
     } else {
