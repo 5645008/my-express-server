@@ -164,33 +164,49 @@ app.get('/api/medicine', (req, res) => {
 });
 
 //텍스트스캔데이터매칭api
-app.post('/api/medicine/search', (req, res) => {
-  const { text } = req.body; // 클라이언트에서 보낸 텍스트
+app.post('/api/medicine/scan-match', (req, res) => {
+  const { text } = req.body;
+
   if (!text) {
     return res.status(400).json({ error: '검색 텍스트가 필요합니다.' });
   }
 
-  // 띄어쓰기 단위로 텍스트 분리
-  const words = text.split(' ');
+  // 띄어쓰기로 텍스트 분리
+  const words = text.split(' ').map(word => word.trim());
 
-  // 데이터베이스에서 매칭된 약 정보 검색
+  // 데이터베이스 쿼리 작성
   const query = `
     SELECT entpName, itemName, efcyQesitm 
     FROM medicine 
-    WHERE itemName IN (?)
+    WHERE itemName = ?
   `;
-  db.query(query, [words], (err, results) => {
-    if (err) {
-      console.error('Database query error:', err);
-      return res.status(500).json({ error: 'Database query error' });
-    }
 
-    if (results.length > 0) {
-      res.json({ matches: results }); // 매칭된 결과 반환
-    } else {
-      res.json({ matches: [], message: '매칭된 항목이 없습니다.' });
+  // 순서대로 단어를 하나씩 확인하며 쿼리 실행
+  const results = [];
+  const processWord = (index) => {
+    if (index >= words.length) {
+      // 모든 단어 처리 후 결과 반환
+      if (results.length > 0) {
+        res.json({ matches: results });
+      } else {
+        res.json({ matches: [], message: '매칭된 항목이 없습니다.' });
+      }
+      return;
     }
-  });
+    db.query(query, [words[index]], (err, rows) => {
+      if (err) {
+        console.error('Database query error:', err);
+        return res.status(500).json({ error: 'Database query error' });
+      }
+      // 매칭 결과 추가
+      if (rows.length > 0) {
+        results.push(...rows);
+      }
+      // 다음 단어 처리
+      processWord(index + 1);
+    });
+  };
+  processWord(0); // 첫 번째 단어부터 시작
 });
 
 
