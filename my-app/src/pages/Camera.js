@@ -17,6 +17,9 @@ const Camera = ({ onCapture }) => {
         ref={webcamRef}
         screenshotFormat="image/jpeg"
         width={300}
+        videoConstraints={{
+          facingMode: "environment", // 후면카메라 설정
+        }}
       />
       <button onClick={captureImage}>Capture Image</button>
     </div>
