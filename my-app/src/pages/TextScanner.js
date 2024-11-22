@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { GOOGLE_CLOUD_VISION_API_KEY } from './config';
 
 const TextScanner = ({ image }) => {
-  const [text, setText] = useState(''); // 스캔된 텍스트
+  const [text, setText] = useState('');
   const [medicines, setMedicines] = useState([]); // 매칭된 의약품 리스트
-  const [error, setError] = useState(''); // 에러 메시지
 
   const scanText = async () => {
     try {
       // Google Vision API 호출
       const response = await axios.post(
-        `https://vision.googleapis.com/v1/images:annotate?key=GOOGLE_CLOUD_VISION_API_KEY`, // API 키 설정
+        `https://vision.googleapis.com/v1/images:annotate?key=${GOOGLE_CLOUD_VISION_API_KEY}`,
         {
           requests: [
             {
               image: {
-                content: image.split(',')[1], // Base64 이미지 데이터
+                content: image.split(',')[1],
               },
               features: [
                 {
@@ -28,26 +28,28 @@ const TextScanner = ({ image }) => {
         }
       );
 
-      const detectedText = response.data.responses[0]?.fullTextAnnotation?.text;
-      if (detectedText) {
-        setText(detectedText); // 스캔된 텍스트 저장
-        searchMedicines(detectedText); // 매칭된 약 정보 검색
-      } else {
-        setError('텍스트를 감지하지 못했습니다.');
-      }
+      const detectedText = response.data.responses[0].fullTextAnnotation.text;
+      setText(detectedText);
+
+      // 매칭된 의약품 검색
+      searchMedicines(detectedText);
     } catch (error) {
-      setError('텍스트 스캔 중 오류가 발생했습니다.');
       console.error('Error scanning text:', error);
     }
   };
 
-  const searchMedicines = async (detectedText) => {
+  const searchMedicines = async (text) => {
     try {
-      // 매칭된 의약품 검색 API 호출
-      const response = await axios.post('https://moyak.store/api/medicine/search', { text: detectedText });
-      setMedicines(response.data.matches || []); // 매칭 결과 저장
+      // 텍스트를 API에 전달
+      const response = await axios.post('https://moyak.store/api/medicine/search', { text });
+      
+      if (response.data.matches && response.data.matches.length > 0) {
+        setMedicines(response.data.matches); // 매칭된 결과 저장
+      } else {
+        console.log(response.data.message || '매칭된 항목이 없습니다.');
+        setMedicines([]);
+      }
     } catch (error) {
-      setError('매칭된 약 정보를 불러오는 중 오류가 발생했습니다.');
       console.error('Error fetching medicines:', error);
     }
   };
