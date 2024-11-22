@@ -58,8 +58,8 @@ const TextScanner = ({ image }) => {
     <div>
       <button onClick={scanText}>Scan Text</button>
       {text && <p><strong>Detected Text:</strong> {text}</p>}
-
-      {/* 매칭된 약 정보 */}
+  
+      {/* 매칭된 약 정보 표시 */}
       {medicines.length > 0 ? (
         <div>
           <h3>매칭된 의약품 정보</h3>
@@ -72,9 +72,9 @@ const TextScanner = ({ image }) => {
             ))}
           </ul>
         </div>
-      )(
-        <p>매칭된 약 정보가 없습니다.</p>
-      ) : null}
+      ) : (
+        text && <p>매칭된 약 정보가 없습니다.</p> // 스캔된 텍스트가 있을 때만 출력
+      )}
     </div>
   );
 };
