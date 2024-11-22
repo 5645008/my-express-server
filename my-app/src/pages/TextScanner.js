@@ -58,7 +58,6 @@ const TextScanner = ({ image }) => {
     <div>
       <button onClick={scanText}>Scan Text</button>
       {text && <p><strong>Detected Text:</strong> {text}</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
 
       {/* 매칭된 약 정보 */}
       {medicines.length > 0 ? (
@@ -73,7 +72,7 @@ const TextScanner = ({ image }) => {
             ))}
           </ul>
         </div>
-      ) : text && !error ? (
+      )(
         <p>매칭된 약 정보가 없습니다.</p>
       ) : null}
     </div>
