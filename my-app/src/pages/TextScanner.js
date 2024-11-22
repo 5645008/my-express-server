@@ -41,11 +41,11 @@ const TextScanner = ({ image }) => {
 
   const searchMedicines = async (detectedText) => {
     try {
-      // 텍스트 전처리: 띄어쓰기 단위로 분리, 한글만 추출
+      // 텍스트 전처리: 한글만 추출, 길이 2 이상인 단어만 필터링
       const words = detectedText
         .split(' ')
         .map(word => word.replace(/[^가-힣]/g, '').trim()) // 한글만 남기고 공백 제거
-        .filter(word => word); // 빈 문자열 제거
+        .filter(word => word.length > 1); // 길이 조건 추가
 
       console.log('전처리된 단어 목록:', words);
 
@@ -67,6 +67,10 @@ const TextScanner = ({ image }) => {
       // 유효한 결과만 필터링
       const matchedMedicines = results.filter((medicine) => medicine !== null);
       setMedicines(matchedMedicines);
+
+      if (matchedMedicines.length === 0) {
+        console.log('매칭된 약 정보가 없습니다.');
+      }
     } catch (error) {
       console.error('Error fetching medicines:', error);
     }
