@@ -40,8 +40,15 @@ const TextScanner = ({ image }) => {
 
   const searchMedicines = async (text) => {
     try {
+      // 텍스트를 API에 전달
       const response = await axios.post('https://moyak.store/api/medicine/search', { text });
-      setMedicines(response.data.matchedMedicines); // 검색 결과 저장
+      
+      if (response.data.matches && response.data.matches.length > 0) {
+        setMedicines(response.data.matches); // 매칭된 결과 저장
+      } else {
+        console.log(response.data.message || '매칭된 항목이 없습니다.');
+        setMedicines([]);
+      }
     } catch (error) {
       console.error('Error fetching medicines:', error);
     }

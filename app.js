@@ -163,27 +163,34 @@ app.get('/api/medicine', (req, res) => {
   });
 });
 
+//텍스트스캔데이터매칭api
 app.post('/api/medicine/search', (req, res) => {
-  const text  = req.body; // 클라이언트에서 보낸 텍스트
+  const { text } = req.body; // 클라이언트에서 보낸 텍스트
+  if (!text) {
+    return res.status(400).json({ error: '검색 텍스트가 필요합니다.' });
+  }
 
-  // 입력된 텍스트를 띄어쓰기 단위로 분리
+  // 띄어쓰기 단위로 텍스트 분리
   const words = text.split(' ');
 
-  // 매칭된 결과 저장
-  const results = medicines.filter(medicine => 
-      words.includes(medicine.itemName)
-  ).map(medicine => ({
-      entpName: medicine.entpName,
-      itemName: medicine.itemName,
-      efcyQesitm: medicine.efcyQesitm
-  }));
+  // 데이터베이스에서 매칭된 약 정보 검색
+  const query = `
+    SELECT entpName, itemName, efcyQesitm 
+    FROM medicine 
+    WHERE itemName IN (?)
+  `;
+  db.query(query, [words], (err, results) => {
+    if (err) {
+      console.error('Database query error:', err);
+      return res.status(500).json({ error: 'Database query error' });
+    }
 
-  // 결과 반환
-  if (results.length > 0) {
-      res.json({ matches: results });
-  } else {
-      res.json({ matches: [], message: "매칭된 항목이 없습니다." });
-  }
+    if (results.length > 0) {
+      res.json({ matches: results }); // 매칭된 결과 반환
+    } else {
+      res.json({ matches: [], message: '매칭된 항목이 없습니다.' });
+    }
+  });
 });
 
 
