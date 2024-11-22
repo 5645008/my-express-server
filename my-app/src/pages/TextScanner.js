@@ -28,27 +28,38 @@ const TextScanner = ({ image }) => {
         }
       );
 
-      const detectedText = response.data.responses[0].fullTextAnnotation.text;
+      const detectedText = response.data.responses[0]?.fullTextAnnotation?.text || '';
       setText(detectedText);
 
-      // 매칭된 의약품 검색
-      searchMedicines(detectedText);
+      if (detectedText) {
+        await searchMedicines(detectedText);
+      }
     } catch (error) {
       console.error('Error scanning text:', error);
     }
   };
 
-  const searchMedicines = async (text) => {
+  const searchMedicines = async (detectedText) => {
     try {
-      // 텍스트를 API에 전달
-      const response = await axios.post('https://moyak.store/api/medicine/search', { text });
-      
-      if (response.data.matches && response.data.matches.length > 0) {
-        setMedicines(response.data.matches); // 매칭된 결과 저장
-      } else {
-        console.log(response.data.message || '매칭된 항목이 없습니다.');
-        setMedicines([]);
+      // 텍스트를 띄어쓰기 기준으로 분리
+      const words = detectedText.split(' ').map(word => word.trim());
+      const matchedMedicines = [];
+
+      for (const word of words) {
+        try {
+          const response = await axios.get('https://moyak.store/api/medicine', {
+            params: { name: word }, // 단어를 API에 전달
+          });
+
+          if (response.data) {
+            matchedMedicines.push(response.data); // 매칭된 결과 추가
+          }
+        } catch (error) {
+          console.log(`"${word}"에 대한 약 정보를 찾을 수 없습니다.`);
+        }
       }
+
+      setMedicines(matchedMedicines); // 매칭된 결과 상태 업데이트
     } catch (error) {
       console.error('Error fetching medicines:', error);
     }
@@ -58,7 +69,7 @@ const TextScanner = ({ image }) => {
     <div>
       <button onClick={scanText}>Scan Text</button>
       {text && <p><strong>Detected Text:</strong> {text}</p>}
-  
+
       {/* 매칭된 약 정보 표시 */}
       {medicines.length > 0 ? (
         <div>
@@ -73,7 +84,7 @@ const TextScanner = ({ image }) => {
           </ul>
         </div>
       ) : (
-        text && <p>매칭된 약 정보가 없습니다.</p> // 스캔된 텍스트가 있을 때만 출력
+        text && <p>매칭된 약 정보가 없습니다.</p>
       )}
     </div>
   );
