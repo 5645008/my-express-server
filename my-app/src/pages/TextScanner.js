@@ -41,25 +41,32 @@ const TextScanner = ({ image }) => {
 
   const searchMedicines = async (detectedText) => {
     try {
-      // 텍스트를 띄어쓰기 기준으로 분리
-      const words = detectedText.split(' ').map(word => word.trim());
-      const matchedMedicines = [];
+      // 텍스트 전처리: 띄어쓰기 단위로 분리, 한글만 추출
+      const words = detectedText
+        .split(' ')
+        .map(word => word.replace(/[^가-힣]/g, '').trim()) // 한글만 남기고 공백 제거
+        .filter(word => word); // 빈 문자열 제거
 
-      for (const word of words) {
-        try {
-          const response = await axios.get('https://moyak.store/api/medicine', {
-            params: { name: word }, // 단어를 API에 전달
-          });
+      console.log('전처리된 단어 목록:', words);
 
-          if (response.data) {
-            matchedMedicines.push(response.data); // 매칭된 결과 추가
+      // 모든 단어에 대해 병렬로 API 호출
+      const results = await Promise.all(
+        words.map(async (word) => {
+          try {
+            const response = await axios.get('https://moyak.store/api/medicine', {
+              params: { name: word },
+            });
+            return response.data; // 성공한 데이터 반환
+          } catch (error) {
+            console.log(`"${word}"에 대한 약 정보를 찾을 수 없습니다.`);
+            return null; // 실패한 경우 null 반환
           }
-        } catch (error) {
-          console.log(`"${word}"에 대한 약 정보를 찾을 수 없습니다.`);
-        }
-      }
+        })
+      );
 
-      setMedicines(matchedMedicines); // 매칭된 결과 상태 업데이트
+      // 유효한 결과만 필터링
+      const matchedMedicines = results.filter((medicine) => medicine !== null);
+      setMedicines(matchedMedicines);
     } catch (error) {
       console.error('Error fetching medicines:', error);
     }
@@ -84,7 +91,7 @@ const TextScanner = ({ image }) => {
           </ul>
         </div>
       ) : (
-        text && <p>매칭된 약 정보가 없습니다.</p>
+        text && medicines.length === 0 && <p>매칭된 약 정보가 없습니다.</p>
       )}
     </div>
   );
