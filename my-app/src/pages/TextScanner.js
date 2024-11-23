@@ -5,7 +5,7 @@ import { GOOGLE_CLOUD_VISION_API_KEY } from './config';
 const TextScanner = ({ image }) => {
   const [text, setText] = useState('');
   const [medicines, setMedicines] = useState([]); // 매칭된 의약품 리스트
-
+  const [words, setWords] = useState([]); // 전처리된 단어 상태
   const scanText = async () => {
     try {
       // Google Vision API 호출
@@ -48,6 +48,7 @@ const TextScanner = ({ image }) => {
         .filter(word => word.length > 1); // 길이 조건 추가
 
       console.log('전처리된 단어 목록:', words);
+      setWords(processedWords); // 전처리된 단어를 상태로 저장
 
       // 모든 단어에 대해 병렬로 API 호출
       const results = await Promise.all(
@@ -80,7 +81,12 @@ const TextScanner = ({ image }) => {
     <div>
       <button onClick={scanText}>Scan Text</button>
       {text && <p><strong>Detected Text:</strong> {text}</p>}
-
+      <h2>전처리된 단어 목록:</h2>
+      <ul>
+        {words.map((word, index) => (
+          <li key={index}>{word}</li>
+        ))}
+      </ul>
       {/* 매칭된 약 정보 표시 */}
       {medicines.length > 0 ? (
         <div>
