@@ -48,7 +48,7 @@ const TextScanner = ({ image }) => {
         .filter(word => word.length > 1); // 길이 조건 추가
 
       console.log('전처리된 단어 목록:', words);
-      setWords(processedWords); // 전처리된 단어를 상태로 저장
+      setWords(word); // 전처리된 단어를 상태로 저장
 
       // 모든 단어에 대해 병렬로 API 호출
       const results = await Promise.all(
