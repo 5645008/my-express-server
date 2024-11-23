@@ -43,17 +43,18 @@ const TextScanner = ({ image }) => {
     try {
       // 텍스트 전처리: 한글만 추출, 길이 2 이상인 단어만 필터링
       const words = detectedText
-        .split(' ')
-        .map(word => word.replace(/[^가-힣]/g, '').trim()) // 한글만 남기고 공백 제거
-        .filter(word => word.length > 1); // 길이 조건 추가
+        .split(/\s+/) // 공백을 기준으로 단어 나누기
+        .map(word => word.replace(/[^가-힣]/g, '').trim()) // 한글만 남기기
+        .filter(word => word.length > 1); // 길이가 1 이상인 단어만 필터링
 
       console.log('전처리된 단어 목록:', words);
-      setWords(word); // 전처리된 단어를 상태로 저장
+      setWords(words); // 전처리된 단어를 상태로 저장
 
       // 모든 단어에 대해 병렬로 API 호출
       const results = await Promise.all(
         words.map(async (word) => {
           try {
+            console.log(`"${word}"에 대해 API 호출 중...`);
             const response = await axios.get('https://moyak.store/api/medicine', {
               params: { name: word },
             });
