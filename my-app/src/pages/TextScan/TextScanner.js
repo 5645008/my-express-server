@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { GOOGLE_CLOUD_VISION_API_KEY } from './config';
+import { useNavigate } from 'react-router-dom';
 
 const TextScanner = ({ image }) => {
   const [text, setText] = useState('');
