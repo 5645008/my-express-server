@@ -1,3 +1,4 @@
+// TextScan/ScanQR.js
 import React, { useState, useEffect } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import Tesseract from 'tesseract.js';

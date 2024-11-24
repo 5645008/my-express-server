@@ -1,3 +1,4 @@
+// TextScan/useCamera.js
 import { useState, useEffect } from 'react';
 
 const useCamera = () => {

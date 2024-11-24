@@ -1,9 +1,9 @@
 // TextScanPage.js
 import React  from 'react';
-import Camera  from './Camera';
-import TextScanner  from './TextScanner';
-import ImagePreview  from './ImagePreview';
-import useCamera  from './useCamera';
+import Camera  from './Textscan/Camera';
+import TextScanner  from './TextScan/TextScanner';
+import ImagePreview  from './TextScan/ImagePreview';
+import useCamera  from './TextScan/useCamera';
 
 
 
@@ -13,7 +13,7 @@ function TextScanPage() {
 
   return (
     <div className="TextScanPage">
-      <h1>Text Scanner App</h1>
+      <h1>Text Scanner</h1>
       <Camera onCapture={captureImage} />
       {image && (
         <>

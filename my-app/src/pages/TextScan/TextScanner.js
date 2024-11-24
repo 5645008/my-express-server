@@ -1,3 +1,4 @@
+// TextScan/TextScanner.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import { GOOGLE_CLOUD_VISION_API_KEY } from './config';

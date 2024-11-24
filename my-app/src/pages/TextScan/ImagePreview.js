@@ -1,4 +1,4 @@
-// ImagePreview.js
+// TextScan/ImagePreview.js
 import React from 'react';
 
 const ImagePreview = ({ image }) => {
