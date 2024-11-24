@@ -7,6 +7,7 @@ const TextScanner = ({ image }) => {
   const [text, setText] = useState('');
   const [medicines, setMedicines] = useState([]); // 매칭된 의약품 리스트
   const [words, setWords] = useState([]); // 전처리된 단어 상태
+  const navigate = useNavigate(); // 페이지 이동 함수
   const scanText = async () => {
     try {
       // Google Vision API 호출
@@ -79,6 +80,11 @@ const TextScanner = ({ image }) => {
     }
   };
 
+  // "자세히 보기" 버튼 클릭 시 DetailsPage로 이동
+  const handleDetails = (medicineName) => {
+    navigate('/details', { state: { medicineName } }); // 약 이름 전달하며 페이지 이동
+  };
+
   return (
     <div>
       <button onClick={scanText}>Scan Text</button>
@@ -98,6 +104,8 @@ const TextScanner = ({ image }) => {
               <li key={index}>
                 <p><strong>약 이름:</strong> {medicine.itemName}</p>
                 <p><strong>효능:</strong> {medicine.efcyQesitm}</p>
+                {/* "자세히 보기" 버튼 추가 */}
+                <button onClick={() => handleDetails(medicine.itemName)}>자세히 보기</button>
               </li>
             ))}
           </ul>

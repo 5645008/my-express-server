@@ -163,6 +163,39 @@ app.get('/api/medicine', (req, res) => {
   });
 });
 
+// 약 정보 상세 가져오기 API
+app.get('/api/medicine/details', (req, res) => {
+  const { name } = req.query;
+  if (!name) {
+    return res.status(400).json({ error: '약 이름이 필요합니다.' });
+  }
+  const query = `
+    SELECT 
+      entpName, 
+      efcyQesitm, 
+      useMethodQesitm, 
+      atpnWarnQesitm, 
+      atpnQesitm, 
+      intrcQesitm, 
+      seQesitm, 
+      depositMethodQesitm, 
+      ingredientName 
+    FROM medicine 
+    WHERE itemName = ? 
+    LIMIT 1
+  `;
+  db.query(query, [name], (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: 'Database query error' });
+    }
+    if (results.length > 0) {
+      res.json(results[0]); // 상세 약 정보 반환
+    } else {
+      res.status(404).json({ error: '약 정보를 찾을 수 없습니다.' });
+    }
+  });
+});
+
 //텍스트스캔데이터매칭api
 app.post('/api/medicine/scan-match', (req, res) => {
   const { text } = req.body;
