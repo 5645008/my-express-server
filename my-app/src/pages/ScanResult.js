@@ -1,4 +1,4 @@
-// TextScan/ScanResult.js
+// ScanResult.js
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../css/ScanResult.styled.css';
