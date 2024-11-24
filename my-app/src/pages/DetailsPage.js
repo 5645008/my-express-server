@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
-import './DetailsPage.css';
+import '../css/DetailsPage.css';
 
 const DetailsPage = () => {
   const [details, setDetails] = useState(null);
