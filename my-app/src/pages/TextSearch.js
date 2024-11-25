@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import '../css/TextSearch.styled.css';
@@ -7,9 +7,10 @@ import back from '../assets/back_arrow.png';
 
 function TextSearch() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [recentSearches, setRecentSearches] = useState([]); // 초기 상태를 빈 배열로 설정
+  const [recentSearches, setRecentSearches] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
   const [selectedMedicine, setSelectedMedicine] = useState(null); // 선택된 약 정보
+  const [showInfoBox, setShowInfoBox] = useState(false); // 하단 정보 박스 표시 여부
 
   // 검색어 입력 시 핸들러
   const handleInputChange = async (e) => {
@@ -35,6 +36,7 @@ function TextSearch() {
     try {
       const response = await axios.get(`https://moyak.store/api/medicine?name=${searchTerm}`);
       setSelectedMedicine(response.data); // 선택된 약 정보 설정
+      setShowInfoBox(true); // 정보 박스 표시
     } catch (error) {
       console.error('Error fetching medicine details:', error);
     }
@@ -86,11 +88,12 @@ function TextSearch() {
         </ul>
       )}
 
-      {/* 선택된 약 정보 */}
+      {/* 하단 정보 박스 */}
       {selectedMedicine && (
-        <div className="medicine-info">
+        <div className={`medicine-info-box ${showInfoBox ? 'visible' : ''}`}>
           <h3>{selectedMedicine.itemName}</h3>
           <p>{selectedMedicine.efcyQesitm}</p>
+          <button className="details-button">상세 정보 보기</button> {/* 추가된 버튼 */}
         </div>
       )}
 

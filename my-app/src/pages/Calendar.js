@@ -1,132 +1,149 @@
-// src/pages/Calendar.js
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../css/Calendar.styled.css';
-import { Bell, Volume2, VolumeX, ArrowLeft } from 'lucide-react';
+import { Bell, Volume2, VolumeX } from 'lucide-react';
 import Calendar from 'react-calendar';
+import axios from 'axios';
 import back from '../assets/back_arrow.png';
 import 'react-calendar/dist/Calendar.css';
 
 const DAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
-const CalendarPage = ({ goBack }) => {
+const CalendarPage = ({ userId }) => {
   const [medication, setMedication] = useState('');
   const [time, setTime] = useState('');
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedDays, setSelectedDays] = useState([]);
   const [reminders, setReminders] = useState([]);
 
-  // 알림 권한 요청 로직
+  // 알림 권한 요청
   useEffect(() => {
-    if (Notification.permission === "denied") {
-      console.log("Notification permission denied. Removing and re-requesting.");
-    } else if (Notification.permission === "default") {
-      Notification.requestPermission().then(permission => {
-        console.log("Permission status after request:", permission);
-      });
-    } else {
-      console.log("Notification permission granted.");
+    if (Notification.permission === 'default') {
+      Notification.requestPermission();
     }
   }, []);
 
-  // 로컬 스토리지에서 알림 목록 불러오기
+  // 사용자별 알림 데이터 불러오기
   useEffect(() => {
-    const savedReminders = localStorage.getItem('medicationReminders');
-    if (savedReminders) {
-      setReminders(JSON.parse(savedReminders).map(reminder => ({
-        ...reminder,
-        date: reminder.date ? new Date(reminder.date) : null
-      })));
+    const fetchReminders = async () => {
+      try {
+        const response = await axios.get(`/api/reminders?user_id=${userId}`);
+        setReminders(response.data);
+      } catch (error) {
+        console.error('Error fetching reminders:', error);
+      }
+    };
+
+    fetchReminders();
+  }, [userId]);
+
+  // 알림 추가
+  const addReminder = async () => {
+    if (!medication || !time || (!selectedDate && selectedDays.length === 0)) {
+      alert('약 이름, 시간, 날짜 또는 요일을 설정하세요.');
+      return;
     }
-  }, []);
 
-  // 알림 목록을 로컬 스토리지에 저장
-  useEffect(() => {
-    localStorage.setItem('medicationReminders', JSON.stringify(reminders));
-  }, [reminders]);
+    const reminder = {
+      user_id: userId,
+      medication,
+      reminder_time: time,
+      reminder_date: selectedDate,
+      days_of_week: selectedDays.join(','), // 요일을 CSV로 저장
+      sound_enabled: true,
+    };
 
-  const showNotification = (title, body) => {
-    if (Notification.permission === 'granted') {
-      const notification = new Notification(title, {
-        body: body,
-        icon: '/medicine-icon.png'
-      });
-      notification.onclick = () => window.focus();
-    } else {
-      console.log("Notification permission not granted.");
+    try {
+      const response = await axios.post('/api/reminders', reminder);
+      setReminders([...reminders, { ...reminder, id: response.data.id }]);
+      alert(`${medication} 알림이 추가되었습니다.`);
+    } catch (error) {
+      console.error('Error adding reminder:', error);
+      alert('알림 추가에 실패했습니다.');
+    }
+
+    // 입력 필드 초기화
+    setMedication('');
+    setTime('');
+    setSelectedDate(null);
+    setSelectedDays([]);
+  };
+
+  // 알림 삭제
+  const deleteReminder = async (id) => {
+    try {
+      await axios.delete(`/api/reminders/${id}`);
+      setReminders(reminders.filter((reminder) => reminder.id !== id));
+      alert('알림이 삭제되었습니다.');
+    } catch (error) {
+      console.error('Error deleting reminder:', error);
+      alert('알림 삭제에 실패했습니다.');
     }
   };
 
-  const handleDaySelection = (dayIndex) => {
-    setSelectedDays(selectedDays.includes(dayIndex) 
-      ? selectedDays.filter(day => day !== dayIndex) 
-      : [...selectedDays, dayIndex]
-    );
-  };
+  // 알림 소리 설정 토글
+  const toggleSound = async (id) => {
+    const reminder = reminders.find((reminder) => reminder.id === id);
+    if (!reminder) return;
 
-  const addReminder = () => {
-    if (medication && time && (selectedDate || selectedDays.length > 0)) {
-      const reminder = {
-        medication,
-        time,
-        date: selectedDate,
-        days: selectedDays,
-        soundEnabled: true,
-        notified: false, // 알림 발송 여부 초기화
-        id: Date.now()
-      };
-  
-      setReminders([...reminders, reminder]);
-      setMedication('');
-      setTime('');
-      setSelectedDate(null);
-      setSelectedDays([]);
-      alert(`${medication} 알림이 설정되었습니다.`);
+    const updatedReminder = { ...reminder, sound_enabled: !reminder.sound_enabled };
+
+    try {
+      await axios.put(`/api/reminders/${id}`, updatedReminder);
+      setReminders(
+        reminders.map((r) => (r.id === id ? { ...r, sound_enabled: updatedReminder.sound_enabled } : r))
+      );
+    } catch (error) {
+      console.error('Error toggling sound:', error);
+      alert('알림 소리 설정 변경에 실패했습니다.');
     }
   };
 
-  const deleteReminder = (id) => {
-    setReminders(reminders.filter(reminder => reminder.id !== id));
-    alert("알림이 삭제되었습니다.");
-  };
-
-  const toggleSound = (id) => {
-    setReminders(reminders.map(reminder => 
-      reminder.id === id ? { ...reminder, soundEnabled: !reminder.soundEnabled } : reminder
-    ));
-  };
-
+  // 알림 확인 및 발송
   const checkReminders = () => {
     const now = new Date();
-    const currentTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const currentDay = now.getDay();
+    const currentHour = now.getHours(); // 현재 시간 (Hour)
+    const currentMinute = now.getMinutes(); // 현재 분 (Minute)
+    const currentDay = now.getDay(); // 현재 요일 (0: 일요일 ~ 6: 토요일)
   
-    setReminders(prevReminders => 
-      prevReminders.map(reminder => {
-        const reminderDate = new Date(reminder.date);
-        const isSameDate = reminderDate.getDate() === now.getDate() &&
-                           reminderDate.getMonth() === now.getMonth() &&
-                           reminderDate.getFullYear() === now.getFullYear();
+    reminders.forEach(async (reminder) => {
+      const [reminderHour, reminderMinute] = reminder.reminder_time.split(':').map(Number); // 알림의 Hour와 Minute
   
-        // 알림이 아직 울리지 않았고, 조건에 부합할 때만 알림 발송
-        if (!reminder.notified && (isSameDate || reminder.days.includes(currentDay)) && reminder.time <= currentTime) {
-          showNotification("약 복용 시간", `${reminder.medication} 복용 시간입니다!`);
-          return { ...reminder, notified: true }; // 알림 발송 여부를 true로 설정
+      const isToday =
+        reminder.reminder_date && new Date(reminder.reminder_date).toDateString() === now.toDateString();
+      const isRepeatDay = reminder.days_of_week && reminder.days_of_week.split(',').includes(String(currentDay));
+  
+      // 시간(Hour)와 분(Minute)을 정확히 비교
+      const isExactTime = currentHour === reminderHour && currentMinute === reminderMinute;
+  
+      if ((isToday || isRepeatDay) && isExactTime && !reminder.notified) {
+        // 알림 조건이 만족되면 알림 표시
+        if (Notification.permission === 'granted') {
+          new Notification('약 복용 알림', { body: `${reminder.medication} 복용 시간입니다.` });
         }
-        return reminder;
-      })
-    );
-  };
+  
+        // 알림 발송 여부를 true로 업데이트
+        try {
+          await axios.put(`/api/reminders/${reminder.id}`, { ...reminder, notified: true });
+          setReminders(reminders.map((r) => (r.id === reminder.id ? { ...r, notified: true } : r)));
+        } catch (error) {
+          console.error('Error updating notification status:', error);
+        }
+      }
+    });
+  };  
 
   useEffect(() => {
-    const interval = setInterval(checkReminders, 10000);
+    const interval = setInterval(checkReminders, 60000); // 1분마다 확인
     return () => clearInterval(interval);
   }, [reminders]);
 
   return (
     <div className="container">
       <div className="header">
-        <Link to="/main"><img src={back} width='20px' alt="back"/></Link>
+        <Link to="/main">
+          <img src={back} width="20px" alt="back" />
+        </Link>
         <h1 className="title">알림</h1>
       </div>
 
@@ -154,12 +171,24 @@ const CalendarPage = ({ goBack }) => {
         </div>
         <div className="weekday-selection">
           {DAYS.map((day, index) => (
-            <div key={index} className={`day ${selectedDays.includes(index) ? 'selected' : ''}`} onClick={() => handleDaySelection(index)}>
+            <div
+              key={index}
+              className={`day ${selectedDays.includes(index) ? 'selected' : ''}`}
+              onClick={() =>
+                setSelectedDays(
+                  selectedDays.includes(index)
+                    ? selectedDays.filter((d) => d !== index)
+                    : [...selectedDays, index]
+                )
+              }
+            >
               {day}
             </div>
           ))}
         </div>
-        <button onClick={addReminder} className="add-button">알림 추가</button>
+        <button onClick={addReminder} className="add-button">
+          알림 추가
+        </button>
       </div>
 
       <div className="reminders-list">
@@ -173,12 +202,17 @@ const CalendarPage = ({ goBack }) => {
                 <Bell size={16} className="bell-icon" />
                 <span>{reminder.medication}</span>
                 <span className="reminder-time">
-                  {reminder.days.length === 7 ? '매일' : reminder.days.length > 0 ? reminder.days.map(dayIndex => DAYS[dayIndex]).join(', ') : reminder.date ? new Date(reminder.date).toLocaleDateString() : '매주'} {reminder.time}
+                  {reminder.days_of_week
+                    ? reminder.days_of_week.split(',').map((d) => DAYS[parseInt(d)]).join(', ')
+                    : new Date(reminder.reminder_date).toLocaleDateString()}{' '}
+                  {reminder.reminder_time}
                 </span>
               </div>
-              <button onClick={() => deleteReminder(reminder.id)} className="delete-button">삭제</button>
+              <button onClick={() => deleteReminder(reminder.id)} className="delete-button">
+                삭제
+              </button>
               <button onClick={() => toggleSound(reminder.id)} className="sound-button">
-                {reminder.soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
+                {reminder.sound_enabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
               </button>
             </div>
           ))
