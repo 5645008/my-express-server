@@ -242,6 +242,67 @@ app.post('/api/medicine/scan-match', (req, res) => {
   processWord(0); // 첫 번째 단어부터 시작
 });
 
+app.get('/api/reminders', async (req, res) => {
+  const userId = req.query.user_id;
+  if (!userId) {
+    return res.status(400).json({ success: false, message: 'User ID is required' });
+  }
+
+  try {
+    const [rows] = await db.query('SELECT * FROM user_reminders WHERE user_id = ?', [userId]);
+    res.json(rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Error fetching reminders' });
+  }
+});
+
+app.post('/api/reminders', async (req, res) => {
+  const { user_id, medication, reminder_time, reminder_date, days_of_week, sound_enabled } = req.body;
+  if (!user_id || !medication || !reminder_time) {
+    return res.status(400).json({ success: false, message: 'Missing required fields' });
+  }
+
+  try {
+    const [result] = await db.query(
+      'INSERT INTO user_reminders (user_id, medication, reminder_time, reminder_date, days_of_week, sound_enabled) VALUES (?, ?, ?, ?, ?, ?)',
+      [user_id, medication, reminder_time, reminder_date, days_of_week, sound_enabled]
+    );
+    res.json({ success: true, id: result.insertId });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Error adding reminder' });
+  }
+});
+
+app.put('/api/reminders/:id', async (req, res) => {
+  const { id } = req.params;
+  const { medication, reminder_time, reminder_date, days_of_week, sound_enabled, notified } = req.body;
+
+  try {
+    await db.query(
+      'UPDATE user_reminders SET medication = ?, reminder_time = ?, reminder_date = ?, days_of_week = ?, sound_enabled = ?, notified = ? WHERE id = ?',
+      [medication, reminder_time, reminder_date, days_of_week, sound_enabled, notified, id]
+    );
+    res.json({ success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Error updating reminder' });
+  }
+});
+
+app.delete('/api/reminders/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await db.query('DELETE FROM user_reminders WHERE id = ?', [id]);
+    res.json({ success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Error deleting reminder' });
+  }
+});
+
 
 
 // 기본 경로에서 빌드된 index.html 파일 제공
