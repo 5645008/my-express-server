@@ -187,26 +187,3 @@
 .back-button:hover svg {
   color: #0056b3;
 }
-@media (max-width: 768px) {
-  .header {
-    flex-direction: column; /* 헤더를 세로 정렬 */
-    align-items: center;
-  }
-
-  .title {
-    font-size: 24px;
-    margin-bottom: 10px;
-  }
-
-  .reminder-form {
-    gap: 10px; /* 입력 필드 간격 줄이기 */
-  }
-
-  .calendar {
-    margin: 10px 0; /* 캘린더 상하 간격 줄이기 */
-  }
-
-  .reminders-list {
-    margin-top: 10px; /* 등록된 알림 간격 조정 */
-  }
-}
