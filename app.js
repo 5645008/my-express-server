@@ -11,8 +11,8 @@ const app = express();
 
 // CORS 설정 (HTTPS에서만 요청을 허용)
 app.use(cors({
-  origin: ['https://moyak.store', 'https://www.moyak.store'],
-  methods: ['GET', 'POST'],
+  origin: ['https://moyak.store', 'https://www.moyak.store', 'http://localhost:3000'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,   // 쿠키 포함 요청 허용
 }));
 
