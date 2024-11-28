@@ -9,6 +9,8 @@ import 'react-calendar/dist/Calendar.css';
 
 const DAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
+const userId = localStorage.getItem('user_id');
+
 const CalendarPage = ({ userId }) => {
   const [medication, setMedication] = useState('');
   const [time, setTime] = useState('');
