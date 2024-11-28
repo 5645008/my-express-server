@@ -244,34 +244,66 @@ app.post('/api/medicine/scan-match', (req, res) => {
 
 app.get('/api/reminders', async (req, res) => {
   const userId = req.query.user_id;
-  if (!userId) {
-    return res.status(400).json({ success: false, message: 'User ID is required' });
+
+  // 1. user_id 검증
+  if (!userId || typeof userId !== 'string') {
+    return res.status(400).json({ success: false, message: 'User ID is required and must be a string' });
   }
 
   try {
+    // 2. 데이터베이스 쿼리 실행
     const [rows] = await db.query('SELECT * FROM user_reminders WHERE user_id = ?', [userId]);
-    res.json(rows);
+
+    // 3. 결과가 없는 경우 처리
+    if (rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'No reminders found for this user' });
+    }
+
+    // 4. 성공적으로 결과 반환
+    res.json({ success: true, reminders: rows });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: 'Error fetching reminders' });
+    console.error('Error fetching reminders:', error);
+    res.status(500).json({ success: false, message: 'Error fetching reminders', error: error.message });
   }
 });
 
 app.post('/api/reminders', async (req, res) => {
   const { user_id, medication, reminder_time, reminder_date, days_of_week, sound_enabled } = req.body;
+
+  // 1. 필수 필드 검증
   if (!user_id || !medication || !reminder_time) {
-    return res.status(400).json({ success: false, message: 'Missing required fields' });
+    return res.status(400).json({ 
+      success: false, 
+      message: 'Missing required fields: user_id, medication, and reminder_time are required' 
+    });
+  }
+
+  // 2. 추가 데이터 검증
+  if (reminder_date && isNaN(Date.parse(reminder_date))) {
+    return res.status(400).json({ 
+      success: false, 
+      message: 'Invalid date format for reminder_date' 
+    });
+  }
+  if (days_of_week && typeof days_of_week !== 'string') {
+    return res.status(400).json({ 
+      success: false, 
+      message: 'days_of_week must be a comma-separated string' 
+    });
   }
 
   try {
+    // 3. 데이터베이스 삽입
     const [result] = await db.query(
       'INSERT INTO user_reminders (user_id, medication, reminder_time, reminder_date, days_of_week, sound_enabled) VALUES (?, ?, ?, ?, ?, ?)',
-      [user_id, medication, reminder_time, reminder_date, days_of_week, sound_enabled]
+      [user_id, medication, reminder_time, reminder_date || null, days_of_week || null, sound_enabled || true]
     );
+
+    // 4. 성공적으로 삽입 완료
     res.json({ success: true, id: result.insertId });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: 'Error adding reminder' });
+    console.error('Error adding reminder:', error);
+    res.status(500).json({ success: false, message: 'Error adding reminder', error: error.message });
   }
 });
 
