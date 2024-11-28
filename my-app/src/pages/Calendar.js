@@ -11,7 +11,7 @@ const DAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
 const userId = localStorage.getItem('user_id');
 
-const CalendarPage = ({ userId }) => {
+const CalendarPage = () => {
   const [medication, setMedication] = useState('');
   const [time, setTime] = useState('');
   const [selectedDate, setSelectedDate] = useState(null);
