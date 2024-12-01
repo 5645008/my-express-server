@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import '../css/DetailsPage.styled.css';
 import back from '../assets/back_arrow.png';
