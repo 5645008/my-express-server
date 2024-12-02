@@ -291,10 +291,12 @@ app.post('/api/check-medicine', (req, res) => {
               return res.status(404).json({ error: 'Medicine not found' });
           }
 
-          // 제한된 질병과 사용자 질병 비교
-          const restrictedMatches = userDiseases.filter(disease =>
-              restrictedSymptoms.includes(disease)
-          );
+          // 질병 리스트를 쉼표로 분리하여 배열로 변환
+          const userDiseases = userResults[0].user_disease.split(','); 
+          const restrictedSymptomsArray = medicineResults[0].restrictedSymptoms.split(',');
+
+          // 교집합을 찾아 겹치는 병명 찾기
+          const restrictedMatches = userDiseases.filter(disease => restrictedSymptomsArray.includes(disease));
 
           if (restrictedMatches.length > 0) {
               return res.json({
