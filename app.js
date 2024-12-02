@@ -245,7 +245,7 @@ app.post('/api/medicine/scan-match', (req, res) => {
 
 // 사용자 질병 조회 함수
 function getUserDiseases(userId, callback) {
-  pool.query('SELECT user_disease FROM user WHERE id = ?', [userId], (err, results) => {
+  db.query('SELECT user_disease FROM user WHERE id = ?', [userId], (err, results) => {
       if (err) return callback(err);
       if (results.length === 0) return callback(null, null); // 사용자 없음
       const userDiseases = results[0].user_disease.split(',').map(d => d.trim());
@@ -255,7 +255,7 @@ function getUserDiseases(userId, callback) {
 
 // 약물 제한 질병 조회 함수
 function getRestrictedSymptoms(itemName, callback) {
-  pool.query('SELECT restrictedSymptoms FROM medicine WHERE itemName = ?', [itemName], (err, results) => {
+  db.query('SELECT restrictedSymptoms FROM medicine WHERE itemName = ?', [itemName], (err, results) => {
       if (err) return callback(err);
       if (results.length === 0) return callback(null, null); // 약물 없음
       const restrictedSymptoms = results[0].restrictedSymptoms.split(',').map(s => s.trim());
@@ -290,10 +290,6 @@ app.post('/api/check-medicine', (req, res) => {
           if (!restrictedSymptoms) {
               return res.status(404).json({ error: 'Medicine not found' });
           }
-
-          // 질병 리스트를 쉼표로 분리하여 배열로 변환
-          const userDiseases = userResults[0].user_disease.split(','); 
-          const restrictedSymptomsArray = medicineResults[0].restrictedSymptoms.split(',');
 
           // 교집합을 찾아 겹치는 병명 찾기
           const restrictedMatches = userDiseases.filter(disease => restrictedSymptomsArray.includes(disease));
