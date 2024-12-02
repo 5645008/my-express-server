@@ -245,7 +245,7 @@ app.post('/api/medicine/scan-match', (req, res) => {
 
 // 사용자 질병 조회 함수
 function getUserDiseases(user_id, callback) {
-  db.query('SELECT user_disease FROM user WHERE id = ?', [user_id], (err, results) => {
+  db.query('SELECT user_disease FROM user WHERE user_id = ?', [user_id], (err, results) => {
       if (err) return callback(err);
       if (results.length === 0) return callback(null, null); // 사용자 없음
       const user_disease = results[0].user_disease.split(',').map(d => d.trim());
