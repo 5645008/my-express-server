@@ -57,8 +57,8 @@ function TextSearch() {
   };
 
   // "자세히 보기" 버튼 클릭 시 DetailsPage로 이동
-  const handleDetails = () => {
-    navigate('/details', { state: { medicineName: searchTerm } }); // searchTerm 값을 전달
+  const handleDetails = (medicineName) => {
+    navigate('/details', { state: { medicineName } }); // 약 이름 전달하며 페이지 이동
   };
 
   return (
@@ -100,7 +100,7 @@ function TextSearch() {
         <div className={`medicine-info-box ${showInfoBox ? 'visible' : ''}`}>
           <h3>{selectedMedicine.itemName}</h3>
           <p>{selectedMedicine.efcyQesitm}</p>
-          <button className="details-button" onClick={() => handleDetails('exampleMedicineName')}>상세 정보 보기</button> {/* 추가된 버튼 */}
+          <button className="details-button" onClick={() => handleDetails(selectedMedicine.itemName)}>상세 정보 보기</button> {/* 추가된 버튼 */}
         </div>
       )}
 
