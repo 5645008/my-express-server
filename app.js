@@ -243,16 +243,16 @@ app.post('/api/medicine/scan-match', (req, res) => {
 });
 
 app.get('/api/reminders', async (req, res) => {
-  const userId = req.query.user_id;
-  console.log('userId:', userId); // 디버깅용 로그
+  const user_id = req.query.user_id;
+  console.log('user_id:', user_id); // 디버깅용 로그
 
-  if (!userId || typeof userId !== 'string') {
+  if (!user_id || typeof user_id !== 'string') {
     console.error('Invalid user_id');
     return res.status(400).json({ success: false, message: 'User ID is required and must be a string' });
   }
 
   try {
-    const [rows] = await db.query('SELECT * FROM user_reminders WHERE user_id = ?', [userId]);
+    const [rows] = await db.query('SELECT * FROM user_reminders WHERE user_id = ?', [user_id]);
     console.log('Query result:', rows); // 쿼리 결과 확인
 
     if (rows.length === 0) {

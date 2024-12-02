@@ -12,6 +12,8 @@ function TextSearch() {
   const [selectedMedicine, setSelectedMedicine] = useState(null); // 선택된 약 정보
   const [showInfoBox, setShowInfoBox] = useState(false); // 하단 정보 박스 표시 여부
 
+  const navigate = useNavigate(); // 페이지 이동 함수
+
   // 검색어 입력 시 핸들러
   const handleInputChange = async (e) => {
     const term = e.target.value;
@@ -54,6 +56,9 @@ function TextSearch() {
     setSuggestions([]);
   };
 
+  // "자세히 보기" 버튼 클릭 시 DetailsPage로 이동
+  cc
+
   return (
     <div className="text-search-page">
       <header className="search-header">
@@ -93,7 +98,7 @@ function TextSearch() {
         <div className={`medicine-info-box ${showInfoBox ? 'visible' : ''}`}>
           <h3>{selectedMedicine.itemName}</h3>
           <p>{selectedMedicine.efcyQesitm}</p>
-          <button className="details-button">상세 정보 보기</button> {/* 추가된 버튼 */}
+          <button className="details-button" onClick={() => handleDetails('exampleMedicineName')}>상세 정보 보기</button> {/* 추가된 버튼 */}
         </div>
       )}
 
