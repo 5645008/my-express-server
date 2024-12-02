@@ -244,12 +244,12 @@ app.post('/api/medicine/scan-match', (req, res) => {
 
 
 // 사용자 질병 조회 함수
-function getUserDiseases(userId, callback) {
-  db.query('SELECT user_disease FROM user WHERE id = ?', [userId], (err, results) => {
+function getUserDiseases(user_id, callback) {
+  db.query('SELECT user_disease FROM user WHERE id = ?', [user_id], (err, results) => {
       if (err) return callback(err);
       if (results.length === 0) return callback(null, null); // 사용자 없음
-      const userDiseases = results[0].user_disease.split(',').map(d => d.trim());
-      callback(null, userDiseases);
+      const user_disease = results[0].user_disease.split(',').map(d => d.trim());
+      callback(null, user_disease);
   });
 }
 
@@ -272,12 +272,12 @@ app.post('/api/check-medicine', (req, res) => {
   }
 
   // 사용자 질병 조회
-  getUserDiseases(user_id, (err, userDiseases) => {
+  getUserDiseases(user_id, (err, user_disease) => {
       if (err) {
           console.error(err);
           return res.status(500).send('Database error while fetching user data');
       }
-      if (!userDiseases) {
+      if (!user_disease) {
           return res.status(404).json({ error: 'User not found' });
       }
 
@@ -292,7 +292,7 @@ app.post('/api/check-medicine', (req, res) => {
           }
 
           // 교집합을 찾아 겹치는 병명 찾기
-          const restrictedMatches = userDiseases.filter(disease => restrictedSymptomsArray.includes(disease));
+          const restrictedMatches = user_disease.filter(disease => restrictedSymptoms.includes(disease));
 
           if (restrictedMatches.length > 0) {
               return res.json({
