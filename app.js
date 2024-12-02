@@ -306,6 +306,60 @@ app.post('/api/reminders', async (req, res) => {
     res.status(500).json({ success: false, message: 'Error adding reminder', error: error.message });
   }
 });
+// 약물과 지병 상호작용 확인 API
+app.get('/api/check-medication-safety', (req, res) => {
+  const { user_id, medicine_name } = req.query;
+
+  if (!user_id || !medicine_name) {
+    return res.status(400).json({ error: 'user_id와 medicine_name이 필요합니다.' });
+  }
+
+  // 사용자 지병과 약품 금지 지병 가져오기
+  const userDiseaseQuery = 'SELECT user_disease FROM user WHERE user_id = ?';
+  const medicineDiseaseQuery = 'SELECT prohibited_diseases FROM medicine WHERE itemName = ?';
+
+  db.query(userDiseaseQuery, [user_id], (userErr, userResults) => {
+    if (userErr) {
+      console.error('사용자 지병 조회 오류:', userErr);
+      return res.status(500).json({ error: '사용자 정보를 가져오는 중 오류가 발생했습니다.' });
+    }
+
+    if (userResults.length === 0) {
+      return res.status(404).json({ error: '해당 사용자를 찾을 수 없습니다.' });
+    }
+
+    const userDiseases = userResults[0].user_disease.split(',');
+
+    db.query(medicineDiseaseQuery, [medicine_name], (medicineErr, medicineResults) => {
+      if (medicineErr) {
+        console.error('약품 금지 지병 조회 오류:', medicineErr);
+        return res.status(500).json({ error: '약품 정보를 가져오는 중 오류가 발생했습니다.' });
+      }
+
+      if (medicineResults.length === 0) {
+        return res.status(404).json({ error: '해당 약품을 찾을 수 없습니다.' });
+      }
+
+      const prohibitedDiseases = medicineResults[0].prohibited_diseases
+        ? medicineResults[0].prohibited_diseases.split(',')
+        : [];
+
+      // 지병 비교
+      const riskyDiseases = userDiseases.filter(disease =>
+        prohibitedDiseases.includes(disease)
+      );
+
+      if (riskyDiseases.length > 0) {
+        res.json({
+          safe: false,
+          message: `섭취 금지: ${riskyDiseases.join(', ')} 때문에 위험합니다.`,
+        });
+      } else {
+        res.json({ safe: true, message: '섭취 가능합니다.' });
+      }
+    });
+  });
+});
 
 app.put('/api/reminders/:id', async (req, res) => {
   const { id } = req.params;
