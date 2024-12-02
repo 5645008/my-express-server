@@ -31,6 +31,9 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+const mysql = require('mysql2');
+
+
 // MySQL 연결 풀 설정
 const db = mysql.createPool({
   host: '52.78.154.108',
@@ -42,6 +45,7 @@ const db = mysql.createPool({
   connectionLimit: 10,
   queueLimit: 0
 });
+const promiseConnection = connection.promise();
 
 // 인증서 파일 경로
 const privateKey = fs.readFileSync('/etc/letsencrypt/live/moyak.store/privkey.pem', 'utf8');
@@ -314,7 +318,7 @@ app.get('/api/check-medication-safety', (req, res) => {
 
   // 사용자 지병과 약품 금지 지병 가져오기
   const userDiseaseQuery = 'SELECT user_disease FROM user WHERE user_id = ?';
-  const medicineDiseaseQuery = 'SELECT prohibited_diseases FROM medicine WHERE itemName = ?';
+  const medicineDiseaseQuery = 'SELECT restrictedSymptoms FROM medicine WHERE itemName = ?';
 
   db.query(userDiseaseQuery, [user_id], (userErr, userResults) => {
     if (userErr) {
@@ -326,7 +330,15 @@ app.get('/api/check-medication-safety', (req, res) => {
       return res.status(404).json({ error: '해당 사용자를 찾을 수 없습니다.' });
     }
 
-    const userDiseases = userResults[0].user_disease.split(',');
+    let userDiseases = [];
+    if (userResults[0].user_disease) {
+      try {
+        userDiseases = JSON.parse(userResults[0].user_disease); // JSON 형식 파싱
+      } catch (parseError) {
+        console.error('지병 데이터 파싱 오류:', parseError);
+        return res.status(500).json({ error: '사용자 지병 데이터가 올바르지 않습니다.' });
+      }
+    }
 
     db.query(medicineDiseaseQuery, [medicine_name], (medicineErr, medicineResults) => {
       if (medicineErr) {
@@ -338,8 +350,8 @@ app.get('/api/check-medication-safety', (req, res) => {
         return res.status(404).json({ error: '해당 약품을 찾을 수 없습니다.' });
       }
 
-      const prohibitedDiseases = medicineResults[0].prohibited_diseases
-        ? medicineResults[0].prohibited_diseases.split(',')
+      const prohibitedDiseases = medicineResults[0].restrictedSymptoms
+        ? medicineResults[0].restrictedSymptoms.split(',') // 금지 지병 문자열을 배열로 변환
         : [];
 
       // 지병 비교
@@ -348,12 +360,12 @@ app.get('/api/check-medication-safety', (req, res) => {
       );
 
       if (riskyDiseases.length > 0) {
-        res.json({
+        return res.json({
           safe: false,
           message: `섭취 금지: ${riskyDiseases.join(', ')} 때문에 위험합니다.`,
         });
       } else {
-        res.json({ safe: true, message: '섭취 가능합니다.' });
+        return res.json({ safe: true, message: '섭취 가능합니다.' });
       }
     });
   });
