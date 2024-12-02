@@ -248,14 +248,8 @@ function getUserDiseases(user_id, callback) {
   db.query('SELECT user_disease FROM user WHERE user_id = ?', [user_id], (err, results) => {
       if (err) return callback(err);
       if (results.length === 0) return callback(null, null); // 사용자 없음
-      try {
-        // JSON 문자열 파싱
-        const user_disease = JSON.parse(results[0].user_disease);
-        callback(null, user_disease);
-    } catch (parseError) {
-        console.error('Error parsing user_disease:', parseError);
-        callback(new Error('Invalid JSON format in user_disease'));
-    }
+      const user_disease = results[0].user_disease.split(',').map(d => d.trim());
+      callback(null, user_disease);
   });
 }
 
@@ -264,7 +258,7 @@ function getRestrictedSymptoms(itemName, callback) {
   db.query('SELECT restrictedSymptoms FROM medicine WHERE itemName = ?', [itemName], (err, results) => {
       if (err) return callback(err);
       if (results.length === 0) return callback(null, null); // 약물 없음
-      const restrictedSymptoms = results[0].restrictedSymptoms.split(',').map(s => s.trim());
+      const restrictedSymptoms = results[0].restrictedSymptoms.replace(/[\[\]"]/g, '').split(',').map(s => s.trim());
       callback(null, restrictedSymptoms);
   });
 }
