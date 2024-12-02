@@ -64,8 +64,7 @@ http.createServer((req, res) => {
   console.log('HTTP 요청을 HTTPS로 리다이렉션 중...');
 });
 
-// React 정적 파일 제공
-app.use(express.static(path.join(__dirname, "my-app/build")));
+
 
 // MySQL 연결 테스트
 db.query('SELECT 1', (err, results) => {
@@ -243,26 +242,25 @@ app.post('/api/medicine/scan-match', (req, res) => {
 });
 
 app.get('/api/reminders', async (req, res) => {
-  const userId = req.query.user_id;
+  const user_id = req.query.user_id;
+  console.log('user_id:', user_id); // 디버깅용 로그
 
-  // 1. user_id 검증
-  if (!userId || typeof userId !== 'string') {
+  if (!user_id || typeof user_id !== 'string') {
+    console.error('Invalid user_id');
     return res.status(400).json({ success: false, message: 'User ID is required and must be a string' });
   }
 
   try {
-    // 2. 데이터베이스 쿼리 실행
-    const [rows] = await db.query('SELECT * FROM user_reminders WHERE user_id = ?', [userId]);
+    const [rows] = await db.query('SELECT * FROM user_reminders WHERE user_id = ?', [user_id]);
+    console.log('Query result:', rows); // 쿼리 결과 확인
 
-    // 3. 결과가 없는 경우 처리
     if (rows.length === 0) {
-      return res.status(404).json({ success: false, message: 'No reminders found for this user' });
+      return res.json({ success: true, reminders: [] }); // 빈 배열 반환
     }
 
-    // 4. 성공적으로 결과 반환
     res.json({ success: true, reminders: rows });
   } catch (error) {
-    console.error('Error fetching reminders:', error);
+    console.error('Database error:', error); // 에러 로그 추가
     res.status(500).json({ success: false, message: 'Error fetching reminders', error: error.message });
   }
 });
@@ -390,6 +388,9 @@ app.delete('/api/reminders/:id', async (req, res) => {
 });
 
 
+
+// React 정적 파일 제공
+app.use(express.static(path.join(__dirname, "my-app/build")));
 
 // 기본 경로에서 빌드된 index.html 파일 제공
 app.get("/", (req, res) => {

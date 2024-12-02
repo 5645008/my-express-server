@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../css/TextSearch.styled.css';
 import read from '../assets/reading_glasses.png';
@@ -11,6 +11,8 @@ function TextSearch() {
   const [suggestions, setSuggestions] = useState([]);
   const [selectedMedicine, setSelectedMedicine] = useState(null); // 선택된 약 정보
   const [showInfoBox, setShowInfoBox] = useState(false); // 하단 정보 박스 표시 여부
+
+  const navigate = useNavigate(); // 페이지 이동 함수
 
   // 검색어 입력 시 핸들러
   const handleInputChange = async (e) => {
@@ -54,6 +56,11 @@ function TextSearch() {
     setSuggestions([]);
   };
 
+  // "자세히 보기" 버튼 클릭 시 DetailsPage로 이동
+  const handleDetails = (medicineName) => {
+    navigate('/details', { state: { medicineName } }); // 약 이름 전달하며 페이지 이동
+  };
+
   return (
     <div className="text-search-page">
       <header className="search-header">
@@ -93,7 +100,7 @@ function TextSearch() {
         <div className={`medicine-info-box ${showInfoBox ? 'visible' : ''}`}>
           <h3>{selectedMedicine.itemName}</h3>
           <p>{selectedMedicine.efcyQesitm}</p>
-          <button className="details-button">상세 정보 보기</button> {/* 추가된 버튼 */}
+          <button className="details-button" onClick={() => handleDetails(selectedMedicine.itemName)}>상세 정보 보기</button> {/* 추가된 버튼 */}
         </div>
       )}
 
