@@ -242,6 +242,71 @@ app.post('/api/medicine/scan-match', (req, res) => {
   processWord(0); // 첫 번째 단어부터 시작
 });
 
+
+// 사용자 질병 조회 함수
+function getUserDiseases(userId, callback) {
+  pool.query('SELECT user_disease FROM user WHERE id = ?', [userId], (err, results) => {
+      if (err) return callback(err);
+      if (results.length === 0) return callback(null, null); // 사용자 없음
+      const userDiseases = results[0].user_disease.split(',').map(d => d.trim());
+      callback(null, userDiseases);
+  });
+}
+
+// 약물 제한 질병 조회 함수
+function getRestrictedSymptoms(itemName, callback) {
+  pool.query('SELECT restrictedSymptoms FROM medicine WHERE itemName = ?', [itemName], (err, results) => {
+      if (err) return callback(err);
+      if (results.length === 0) return callback(null, null); // 약물 없음
+      const restrictedSymptoms = results[0].restrictedSymptoms.split(',').map(s => s.trim());
+      callback(null, restrictedSymptoms);
+  });
+}
+
+// API 엔드포인트
+app.post('/check-medicine', (req, res) => {
+  const { user_id, itemName } = req.body;
+
+  if (!user_id || !itemName) {
+      return res.status(400).json({ error: 'user_id and itemName are required' });
+  }
+
+  // 사용자 질병 조회
+  getUserDiseases(user_id, (err, userDiseases) => {
+      if (err) {
+          console.error(err);
+          return res.status(500).send('Database error while fetching user data');
+      }
+      if (!userDiseases) {
+          return res.status(404).json({ error: 'User not found' });
+      }
+
+      // 약물 제한 질병 조회
+      getRestrictedSymptoms(itemName, (err, restrictedSymptoms) => {
+          if (err) {
+              console.error(err);
+              return res.status(500).send('Database error while fetching medicine data');
+          }
+          if (!restrictedSymptoms) {
+              return res.status(404).json({ error: 'Medicine not found' });
+          }
+
+          // 제한된 질병과 사용자 질병 비교
+          const restrictedMatches = userDiseases.filter(disease =>
+              restrictedSymptoms.includes(disease)
+          );
+
+          if (restrictedMatches.length > 0) {
+              return res.json({
+                  message: `이 약은 ${restrictedMatches.join(', ')} 때문에 복용하면 안 됩니다.`
+              });
+          } else {
+              return res.json({ message: '이 약은 복용해도 괜찮습니다.' });
+          }
+      });
+  });
+});
+
 app.get('/api/reminders', async (req, res) => {
   const user_id = req.query.user_id;
   console.log('user_id:', user_id); // 디버깅용 로그

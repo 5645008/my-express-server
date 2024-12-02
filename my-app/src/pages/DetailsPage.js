@@ -7,6 +7,7 @@ import back from '../assets/back_arrow.png';
 
 const DetailsPage = () => {
   const [details, setDetails] = useState(null);
+  const [checkResult, setCheckResult] = useState(null); // API 결과 저장
   const location = useLocation();
   const { medicineName } = location.state || {}; // 약 이름 추출
 
@@ -24,6 +25,25 @@ const DetailsPage = () => {
       setDetails(response.data);
     } catch (error) {
       console.error('Error fetching medicine details:', error);
+    }
+  };
+
+  const handleCheckMedicine = async () => {
+    const userId = localStorage.getItem('user_id'); // 로컬 스토리지에서 user_id 가져오기
+    if (!userId) {
+      alert('로그인 정보가 없습니다. 로그인 후 다시 시도해주세요.');
+      return;
+    }
+
+    try {
+      const response = await axios.post('https://moyak.store/api/check-medicine', {
+        user_id: userId,
+        itemName: medicineName,
+      });
+      setCheckResult(response.data.message); // 결과 메시지를 저장
+    } catch (error) {
+      console.error('Error checking medicine compatibility:', error);
+      setCheckResult('오류가 발생했습니다. 다시 시도해주세요.');
     }
   };
 
@@ -49,6 +69,14 @@ const DetailsPage = () => {
         </div>
       ) : (
         <p>로딩 중...</p>
+      )}
+      <button onClick={handleCheckMedicine} className="check-button">
+        나와 맞는지 체크하기
+      </button>
+      {checkResult && (
+        <p className="check-result">
+          {checkResult}
+        </p>
       )}
     </div>
   );
