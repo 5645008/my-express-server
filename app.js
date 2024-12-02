@@ -264,7 +264,7 @@ function getRestrictedSymptoms(itemName, callback) {
 }
 
 // API 엔드포인트
-app.post('/check-medicine', (req, res) => {
+app.post('api/check-medicine', (req, res) => {
   const { user_id, itemName } = req.body;
 
   if (!user_id || !itemName) {
