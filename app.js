@@ -248,7 +248,7 @@ function getUserDiseases(user_id, callback) {
   db.query('SELECT user_disease FROM user WHERE user_id = ?', [user_id], (err, results) => {
       if (err) return callback(err);
       if (results.length === 0) return callback(null, null); // 사용자 없음
-      const user_disease = results[0].user_disease.split(',').map(d => d.trim());
+      const user_disease = results[0].user_disease.replace(/[\[\]"]/g, '').split(',').map(d => d.trim());
       callback(null, user_disease);
   });
 }
