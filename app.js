@@ -64,8 +64,7 @@ http.createServer((req, res) => {
   console.log('HTTP 요청을 HTTPS로 리다이렉션 중...');
 });
 
-// React 정적 파일 제공
-app.use(express.static(path.join(__dirname, "my-app/build")));
+
 
 // MySQL 연결 테스트
 db.query('SELECT 1', (err, results) => {
@@ -335,6 +334,9 @@ app.delete('/api/reminders/:id', async (req, res) => {
 });
 
 
+
+// React 정적 파일 제공
+app.use(express.static(path.join(__dirname, "my-app/build")));
 
 // 기본 경로에서 빌드된 index.html 파일 제공
 app.get("/", (req, res) => {
