@@ -31,8 +31,6 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const mysql = require('mysql2');
-
 
 // MySQL 연결 풀 설정
 const db = mysql.createPool({
@@ -45,7 +43,6 @@ const db = mysql.createPool({
   connectionLimit: 10,
   queueLimit: 0
 });
-const promiseConnection = connection.promise();
 
 // 인증서 파일 경로
 const privateKey = fs.readFileSync('/etc/letsencrypt/live/moyak.store/privkey.pem', 'utf8');
