@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../css/TextSearch.styled.css';
 import read from '../assets/reading_glasses.png';
@@ -57,7 +57,9 @@ function TextSearch() {
   };
 
   // "자세히 보기" 버튼 클릭 시 DetailsPage로 이동
-  cc
+  const handleDetails = (medicineName) => {
+    navigate('/details', { state: { medicineName } }); // 약 이름 전달하며 페이지 이동
+  };
 
   return (
     <div className="text-search-page">
