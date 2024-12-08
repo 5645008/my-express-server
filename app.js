@@ -409,11 +409,18 @@ app.get('/api/user-info', async (req, res) => {
       return res.status(404).json({ success: false, message: '사용자를 찾을 수 없습니다.' });
     }
 
-    // 질병 정보를 JSON으로 파싱
+    // 질병 정보가 없거나 빈 문자열일 경우 빈 배열로 설정
     const user = rows[0];
-    user.user_disease = JSON.parse(user.user_disease || '[]'); // JSON 문자열을 배열로 변환
+    let userDiseases = [];
+    try {
+      userDiseases = JSON.parse(user.user_disease || '[]');
+    } catch (error) {
+      console.error('JSON 파싱 오류:', error);
+      return res.status(500).json({ success: false, message: '질병 정보 파싱 오류' });
+    }
 
-    res.json({ success: true, data: user });
+    // 사용자 정보 반환
+    res.json({ success: true, data: { ...user, user_disease: userDiseases } });
   } catch (error) {
     console.error('회원정보 조회 오류:', error);
     res.status(500).json({ success: false, message: '회원정보 조회에 실패했습니다.' });
