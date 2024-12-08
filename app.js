@@ -419,21 +419,7 @@ app.get('/api/user-info', (req, res) => {
     }
     if (results.length > 0) {
       res.json(results[0]);
-      // user_disease가 JSON 형식 문자열이라면 배열로 파싱
-      let userDiseases = [];
-      try {
-        userDiseases = JSON.parse(user.user_disease); // JSON 문자열을 배열로 변환
-      } catch (e) {
-        console.error('user_disease parsing error:', e);
-      }
-
-      // 응답으로 데이터 반환 (user_disease는 이제 배열)
-      res.json({
-        user_name: user.user_name,
-        user_age: user.user_age,
-        user_disease: userDiseases, // 배열 형태로 반환
-        user_gender: user.user_gender,
-      });
+      
     } else {
       res.status(404).json({ error: '사용자 정보를 찾을 수 없습니다.' });
     }
