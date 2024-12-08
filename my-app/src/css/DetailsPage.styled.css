@@ -1,57 +1,51 @@
+.details-page {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.details-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.back-button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.details-title {
+  font-size: 20px;
+  font-weight: bold;
+}
+
 .details-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    font-family: 'Arial', sans-serif;
-    line-height: 1.6;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .details-header {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  .details-header h1 {
-    font-size: 24px;
-    color: #333;
-  }
-  
-  .details-list {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .details-list li {
-    margin-bottom: 15px;
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-  }
-  
-  .details-list li:last-child {
-    border-bottom: none;
-  }
-  
-  .details-list strong {
-    color: #007bff;
-    font-weight: bold;
-  }
-  
-  .details-list span {
-    color: #555;
-  }
-  
-  .details-empty {
-    text-align: center;
-    font-size: 18px;
-    color: #999;
-  }
-  
-  .loading {
-    text-align: center;
-    font-size: 18px;
-    color: #007bff;
-  }
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.details-item {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.warning-message {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #ffe5e5;
+  border: 1px solid #ff0000;
+  border-radius: 5px;
+  color: #d10000;
+  font-weight: bold;
+  text-align: center;
+}
+
+.loading-message {
+  text-align: center;
+  font-size: 16px;
+  color: #555;
+}

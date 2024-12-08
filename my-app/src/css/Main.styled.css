@@ -3,48 +3,67 @@
   font-family: Arial, sans-serif;
 }
 
+/* 헤더 스타일 */
 .header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 7%;
-  padding: 10px;
-  font-size: 20px;
-  font-weight: 600;
+  justify-content: space-between; /* 좌측, 중앙, 우측 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
+  margin-bottom: 20px;
+  padding: 5px 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .header span {
-  flex: 1;
-  text-align: center;
+  font-size: 12px; /* 텍스트 크기 조정 */
+  font-weight: 600;
 }
 
 .header span:first-child {
   text-align: left;
+  flex: 1;
 }
 
-.header span:last-child {
-  text-align: right;
-  margin-left: 50px;
-}
-
-.calendar-button {
-  border: none;
-  background: none;
-  cursor: pointer;
-  font-size: 24px;
-}
-
-.medication-card {
-  background-color: #f8f8f8;
-  font-weight: 1000;
+.header span:nth-child(2) {
   text-align: center;
-  padding: 20px;
-  margin: 20px 0;
-  margin-bottom: 15%;
-  border-radius: 10px;
-  box-shadow: 0 0 6px rgb(108, 108, 108);
+  flex: 1;
 }
 
+.header .calendar-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  flex: 1;
+  text-align: right;
+}
+
+.header .calendar-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* 약 정보 카드 스타일 */
+.medication-card {
+  background-color: #ffffff;
+  font-weight: 700;
+  text-align: center;
+  padding: 15px;
+  margin: 15px 0;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.medication-card h2 {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.medication-card .medication-list p {
+  font-size: 14px;
+  margin: 5px 0;
+}
+
+/* 버튼 섹션 스타일 */
 .button-section {
   display: flex;
   justify-content: space-around;
@@ -53,29 +72,26 @@
 
 .search-button,
 .camera-button {
-  width: 150px;
-  height: 150px;
+  width: 110px; /* 모바일 화면을 고려하여 크기 축소 */
+  height: 110px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border: 1.75px solid #000;
-  padding: 10px;
-  border-radius: 25px;
-  font-size: 25px;
-  font-weight: 1000;
+  border: 1.5px solid #000;
+  border-radius: 20px;
+  font-size: 12px; /* 텍스트 크기 축소 */
+  font-weight: 600;
   cursor: pointer;
-  text-decoration: none;
   background-color: #fff;
+  text-decoration: none;
 }
 
-.search-icon,
-.camera-icon {
-  font-size: 24px;
-  margin-bottom: 5px; /* 아이콘과 텍스트 간격 */
+.button-icon {
+  margin-bottom: 20px;
 }
 
 a {
-  text-decoration: none; /* 모든 링크에 밑줄 없애기 */
-  color: inherit; /* 링크 클릭 시 색상 변화 방지 */
+  text-decoration: none;
+  color: inherit;
 }
