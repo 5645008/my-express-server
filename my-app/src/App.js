@@ -8,6 +8,7 @@ import Calendar from './pages/Calendar';
 import TextSearch from './pages/TextSearch';
 import DetailsPage from './pages/DetailsPage'; // 상세 설명 페이지
 import TextScanPage from './pages/TextScanPage'; // 텍스트 스캔 페이지 추가
+import Mypage from './pages/Mypage'; // 통합된 Mypage.js 파일
 
 function App() {
   return (
@@ -27,6 +28,8 @@ function App() {
         <Route path="/text-scan" element={<TextScanPage />} />
         {/* 상세 설명 페이지 */}
         <Route path="/details" element={<DetailsPage />} />
+        {/* 마이 페이지 */}
+        <Route path="/mypage" element={<Mypage />} />
       </Routes>
     </Router>
   );

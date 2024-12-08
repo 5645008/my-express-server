@@ -6,6 +6,7 @@ import '../css/Main.styled.css';
 import camera from '../assets/camera.png';
 import calendar from '../assets/calendar_image.png';
 import glass from '../assets/reading_glasses.png';
+import mypage from '../assets/mypage.png';
 
 function Main() {
   const [today, setToday] = useState('');
@@ -98,6 +99,16 @@ function Main() {
           <button className="camera-button">
             <span className="camera-icon"><img src={camera} width='50px' alt="Camera" /></span>
             <span>사진 검색</span> {/* 아이콘 아래 텍스트 출력 */}
+          </button>
+        </Link>
+
+          {/* 마이페이지 버튼 */}
+          <Link to="/mypage">
+          <button className="mypage-button">
+            <span className="mypage-icon">
+              <img src={mypage} width="50px" alt="Mypage" />
+            </span>
+            <span>마이페이지</span>
           </button>
         </Link>
       </div>

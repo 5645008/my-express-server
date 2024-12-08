@@ -247,7 +247,7 @@ app.post('/api/medicine/scan-match', (req, res) => {
 function getUserDiseases(user_id, callback) {
   db.query('SELECT user_disease FROM user WHERE user_id = ?', [user_id], (err, results) => {
       if (err) return callback(err);
-      if (results.length === 0) return callback(null, null); // 사용자 없음
+      if (results.length === 0) return callback(null, null);
       const user_disease = results[0].user_disease.replace(/[\[\]"]/g, '').split(',').map(d => d.trim());
       callback(null, user_disease);
   });
@@ -257,13 +257,13 @@ function getUserDiseases(user_id, callback) {
 function getRestrictedSymptoms(itemName, callback) {
   db.query('SELECT restrictedSymptoms FROM medicine WHERE itemName = ?', [itemName], (err, results) => {
       if (err) return callback(err);
-      if (results.length === 0) return callback(null, null); // 약물 없음
+      if (results.length === 0) return callback(null, null);
       const restrictedSymptoms = results[0].restrictedSymptoms.replace(/[\[\]"]/g, '').split(',').map(s => s.trim());
       callback(null, restrictedSymptoms);
   });
 }
 
-// API 엔드포인트
+// 사용자 질병과 약물 제한 질병 매칭 api
 app.post('/api/check-medicine', (req, res) => {
   const { user_id, itemName } = req.body;
 
@@ -290,8 +290,7 @@ app.post('/api/check-medicine', (req, res) => {
           if (!restrictedSymptoms) {
               return res.status(404).json({ error: 'Medicine not found' });
           }
-
-          // 교집합을 찾아 겹치는 병명 찾기
+          
           const restrictedMatches = user_disease.filter(disease => restrictedSymptoms.includes(disease));
 
           if (restrictedMatches.length > 0) {
@@ -395,6 +394,62 @@ app.delete('/api/reminders/:id', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: 'Error deleting reminder' });
+  }
+});
+
+// 회원정보 조회 API
+app.get('/api/user-info', async (req, res) => {
+  const { user_id } = req.query;
+
+  try {
+    const query = 'SELECT user_name, user_age, user_disease, user_gender FROM user WHERE user_id = ?';
+    const [rows] = await pool.query(query, [user_id]);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ success: false, message: '사용자를 찾을 수 없습니다.' });
+    }
+
+    // 질병 정보를 JSON으로 파싱
+    const user = rows[0];
+    user.user_disease = JSON.parse(user.user_disease || '[]'); // JSON 문자열을 배열로 변환
+
+    res.json({ success: true, data: user });
+  } catch (error) {
+    console.error('회원정보 조회 오류:', error);
+    res.status(500).json({ success: false, message: '회원정보 조회에 실패했습니다.' });
+  }
+});
+
+// 회원정보 수정 API
+app.post('/api/user-update', async (req, res) => {
+  const { user_id, user_name, user_age, user_gender, user_disease, current_password, new_password } = req.body;
+
+  try {
+    if (current_password && new_password) {
+      const [rows] = await pool.query('SELECT user_password FROM user WHERE user_id = ?', [user_id]);
+      if (rows.length === 0 || rows[0].user_password !== current_password) {
+        return res.status(400).json({ success: false, message: '현재 비밀번호가 일치하지 않습니다.' });
+      }
+    }
+
+    const diseaseJson = JSON.stringify(user_disease);
+
+    const updateQuery = `
+      UPDATE user
+      SET user_name = ?, user_age = ?, user_gender = ?, user_disease = ?
+      ${new_password ? ', user_password = ?' : ''}
+      WHERE user_id = ?
+    `;
+    const params = new_password
+      ? [user_name, user_age, user_gender, diseaseJson, new_password, user_id]
+      : [user_name, user_age, user_gender, diseaseJson, user_id];
+
+    await pool.query(updateQuery, params);
+
+    res.json({ success: true, message: '회원정보가 성공적으로 수정되었습니다.' });
+  } catch (error) {
+    console.error('회원정보 수정 오류:', error);
+    res.status(500).json({ success: false, message: '회원정보 수정에 실패했습니다.' });
   }
 });
 
