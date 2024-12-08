@@ -463,13 +463,12 @@ app.post('/api/user-update', async (req, res) => {
 /////////////////////////////////////
 // 사용자 정보를 가져오는 API
 app.get('/api/get-userinfo', (req, res) => {
-  const { user_id } = req.query; // 클라이언트로부터 받은 user_id
+  const { user_id } = req.query;
 
   if (!user_id) {
     return res.status(400).json({ success: false, message: 'user_id가 필요합니다.' });
   }
 
-  // 데이터베이스에서 사용자 정보 조회
   const query = 'SELECT user_id, user_name, user_age, user_disease, user_gender FROM users WHERE user_id = ?';
   
   db.query(query, [user_id], (err, results) => {
@@ -484,6 +483,7 @@ app.get('/api/get-userinfo', (req, res) => {
     }
   });
 });
+
 
 // 사용자 정보를 업데이트하는 API
 app.post('/api/update-userinfo', (req, res) => {

@@ -60,7 +60,7 @@ function Mypage() {
   };
 
   const handleDiseaseChange = (disease) => {
-    let updatedDiseases = userInfo.userDiseases.replace(/[\[\]"]/g, "").split(',').map(d => d.trim()); // 문자열을 배열로 변환
+    let updatedDiseases = userInfo.userDiseases.replace(/[\[\]"\/]/g, "").split(',').map(d => d.trim()); // 문자열을 배열로 변환
     if (updatedDiseases.includes(disease)) {
       // 질병이 이미 포함되어 있으면 제거
       updatedDiseases = updatedDiseases.filter(d => d !== disease);
@@ -89,7 +89,7 @@ function Mypage() {
 
       if (userInfo.currentPassword || userInfo.newPassword) {
         // 비밀번호만 수정
-        const response = await axios.post("https://moyak.store/api/update-user-info", updateData);
+        const response = await axios.post("https://moyak.store/api/user-update", updateData);
         if (response.data.success) {
           alert("비밀번호가 변경되었습니다.");
         } else {
@@ -178,7 +178,7 @@ function Mypage() {
         {showDiseaseOptions && (
           <div className="checkbox-group">
             {diseaseOptions.map((disease, index) => {
-              const isChecked = userInfo.userDiseases.replace(/[\[\]"]/g, "").split(',').map(d => d.trim()).includes(disease);
+              const isChecked = userInfo.userDiseases.replace(/[\[\]"\/]/g, "").split(',').map(d => d.trim()).includes(disease);
               return (
                 <div key={index} className="checkbox-item">
                   <input
