@@ -60,7 +60,7 @@ function Mypage() {
   };
 
   const handleDiseaseChange = (disease) => {
-    let updatedDiseases = userInfo.userDiseases.split(',').map(d => d.trim()); // 문자열을 배열로 변환
+    let updatedDiseases = userInfo.userDiseases.replace(/[\[\]"]/g, "").split(',').map(d => d.trim()); // 문자열을 배열로 변환
     if (updatedDiseases.includes(disease)) {
       // 질병이 이미 포함되어 있으면 제거
       updatedDiseases = updatedDiseases.filter(d => d !== disease);
@@ -178,7 +178,7 @@ function Mypage() {
         {showDiseaseOptions && (
           <div className="checkbox-group">
             {diseaseOptions.map((disease, index) => {
-              const isChecked = userInfo.userDiseases.split(',').map(d => d.trim()).includes(disease);
+              const isChecked = userInfo.userDiseases.replace(/[\[\]"]/g, "").split(',').map(d => d.trim()).includes(disease);
               return (
                 <div key={index} className="checkbox-item">
                   <input
