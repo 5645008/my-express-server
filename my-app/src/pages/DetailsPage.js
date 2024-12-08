@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import '../css/DetailsPage.styled.css';
 import back from '../assets/back_arrow.png';
 
@@ -48,36 +47,52 @@ const DetailsPage = () => {
   };
 
   if (!medicineName) {
-    return <p>약 이름이 전달되지 않았습니다.</p>;
+    return (
+      <div className="details-page">
+        <p className="loading-message">약 이름이 전달되지 않았습니다.</p>
+      </div>
+    );
   }
 
   return (
-    <div>
-      <Link to="/main"><img src={back} width="20px" alt="back" /></Link>
-      <h1>{medicineName} 상세 정보</h1>
+    <div className="details-page">
+      <div className="details-header">
+        <Link to="/main" className="back-button">
+          <img src={back} alt="뒤로 가기" />
+        </Link>
+        <h1 className="details-title">{medicineName} 상세 정보</h1>
+      </div>
+
       {details ? (
-        <div>
-          <p><strong>제조사:</strong> {details.entpName}</p>
-          <p><strong>효능:</strong> {details.efcyQesitm}</p>
-          <p><strong>사용 방법:</strong> {details.useMethodQesitm}</p>
-          <p><strong>주의 경고:</strong> {details.atpnWarnQesitm}</p>
-          <p><strong>주의 사항:</strong> {details.atpnQesitm}</p>
-          <p><strong>상호작용:</strong> {details.intrcQesitm}</p>
-          <p><strong>부작용:</strong> {details.seQesitm}</p>
-          <p><strong>보관 방법:</strong> {details.depositMethodQesitm}</p>
-          <p><strong>성분:</strong> {details.ingredientName}</p>
+        <div className="details-container">
+          <p className="details-item"><strong>제조사:</strong> {details.entpName}</p>
+          <p className="details-item"><strong>효능:</strong> {details.efcyQesitm}</p>
+          <p className="details-item"><strong>사용 방법:</strong> {details.useMethodQesitm}</p>
+          <p className="details-item"><strong>주의 경고:</strong> {details.atpnWarnQesitm}</p>
+          <p className="details-item"><strong>주의 사항:</strong> {details.atpnQesitm}</p>
+          <p className="details-item"><strong>상호작용:</strong> {details.intrcQesitm}</p>
+          <p className="details-item"><strong>부작용:</strong> {details.seQesitm}</p>
+          <p className="details-item"><strong>보관 방법:</strong> {details.depositMethodQesitm}</p>
+          <p className="details-item"><strong>성분:</strong> {details.ingredientName}</p>
         </div>
       ) : (
-        <p>로딩 중...</p>
+        <p className="loading-message">로딩 중...</p>
       )}
+
       <button onClick={handleCheckMedicine} className="check-button">
         나와 맞는지 체크하기
       </button>
+
       {checkResult && (
-        <p className="check-result">
-          {checkResult}
-        </p>
-      )}
+      <p
+        className={`check-result ${
+          checkResult.includes('복용해도 괜찮습니다') ? 'safe' : 'unsafe'
+        }`}
+      >
+        {checkResult}
+      </p>
+    )}
+
     </div>
   );
 };

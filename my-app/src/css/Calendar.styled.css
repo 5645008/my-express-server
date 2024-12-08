@@ -10,17 +10,22 @@
 
 .header {
   display: flex;
-  align-items: center;
-  justify-content: start; /* 좌측 정렬 */
-  position: relative;
+  justify-content: space-between; /* 버튼과 제목을 양쪽 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
   margin-bottom: 20px;
 }
 
+.back-container {
+  flex: 0 0 auto; /* 버튼 크기 고정 */
+}
+
+.title-container {
+  flex: 1; /* 제목 영역 확장 */
+  text-align: center; /* 제목을 중앙 정렬 */
+}
+
 .title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 28px;
+  font-size: 24px;
   font-weight: bold;
   color: #333;
 }
@@ -95,10 +100,6 @@
   gap: 10px;
 }
 
-.bell-icon {
-  color: #007bff;
-}
-
 .delete-button {
   background: none;
   color: red;
@@ -122,10 +123,6 @@
   border: none;
   border-radius: 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.react-calendar__month-view {
-  padding: 10px;
 }
 
 .react-calendar__tile {
@@ -188,16 +185,16 @@
   color: #0056b3;
 }
 
-/*캘린더 모바일*/
+/* 캘린더 모바일 */
 @media (max-width: 768px) {
   .header {
-    flex-direction: column; /* 헤더를 세로 정렬 */
-    align-items: center;
+    flex-direction: row;
+    justify-content: space-between; /* 버튼과 제목을 각각 배치 */
   }
 
   .title {
-    font-size: 24px;
-    margin-bottom: 10px;
+    font-size: 20px;
+    margin-bottom: 5px;
   }
 
   .reminder-form {

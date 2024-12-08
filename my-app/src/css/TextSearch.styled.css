@@ -32,8 +32,8 @@
 /* 검색 예측 드롭다운 스타일 */
 .suggestions-list {
   position: absolute;
-  top: 41px; /* 검색창 바로 아래 위치에서 조금 더 하단으로 */
-  left: 12%; /* 검색창의 시작 위치와 정렬 - 살짝 좌측으로 이동 */
+  top: 25px; /* 검색창 바로 아래 위치에서 조금 더 하단으로 */
+  left: 14%; /* 검색창의 시작 위치와 정렬 - 살짝 좌측으로 이동 */
   width: 71%; /* 검색창 너비와 동일하게 설정 */
   background-color: #fff;
   border: 1px solid #ccc;
@@ -43,7 +43,6 @@
   max-height: 200px;
   overflow-y: auto; /* 스크롤 가능 */
   padding: 0;
-  margin: 0;
   list-style: none;
 }
 
@@ -91,7 +90,7 @@
   position: fixed;
   bottom: -100%; /* 기본적으로 화면 아래에 숨김 */
   left: 0;
-  width: 91%;
+  width: 89%;
   background-color: #fff;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;

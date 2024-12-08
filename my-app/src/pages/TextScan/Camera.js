@@ -1,6 +1,6 @@
-// TextScan/Camera.js
 import React, { useRef } from 'react';
 import Webcam from 'react-webcam';
+import '../../css/Camera.styled.css';
 
 const Camera = ({ onCapture }) => {
   const webcamRef = useRef(null);
@@ -11,7 +11,7 @@ const Camera = ({ onCapture }) => {
   };
 
   return (
-    <div>
+    <div className="camera-container">
       <Webcam
         audio={false}
         ref={webcamRef}
@@ -20,8 +20,9 @@ const Camera = ({ onCapture }) => {
         videoConstraints={{
           facingMode: "environment", // 후면카메라 설정
         }}
+        className="webcam"
       />
-      <button onClick={captureImage}>Capture Image</button>
+      <button onClick={captureImage} className="camera-button" />
     </div>
   );
 };

@@ -1,0 +1,49 @@
+/* Camera 전체 컨테이너 */
+.camera-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 중앙 정렬 */
+    justify-content: center;
+    margin: 20px 0;
+  }
+  
+  /* 웹캠 스타일 */
+  .webcam {
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+  }
+  
+  /* 버튼 스타일 */
+  .camera-button {
+    width: 60px;
+    height: 60px;
+    background-color: #007bff; /* 기본 파란색 */
+    border: none;
+    border-radius: 50%; /* 동그란 버튼 */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+  }
+  
+  .camera-button:hover {
+    background-color: #0056b3; /* 호버 시 어두운 파란색 */
+    transform: scale(1.1); /* 호버 시 살짝 확대 */
+  }
+  
+  .camera-button:active {
+    background-color: #003f7f; /* 클릭 시 더 어두운 파란색 */
+    transform: scale(0.95); /* 클릭 시 살짝 축소 */
+  }
+  
+  /* 버튼 중앙에 원 형태 추가 */
+  .camera-button::after {
+    content: '';
+    display: block;
+    width: 30px;
+    height: 30px;
+    background-color: white;
+    border-radius: 50%; /* 내부 동그라미 */
+    margin: auto;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  }  

@@ -22,7 +22,11 @@ function Login() {
       });
 
       if (response.data.success) {
-        localStorage.setItem('user_id', response.data.user_id);  // 서버에서 받은 user_id 저장
+        // 로그인 성공 시 로컬 스토리지에서 reminders 삭제
+        localStorage.removeItem('reminders'); // 알람 데이터 삭제
+        localStorage.removeItem('recentSearches'); // 최근 검색 기록도 삭제 (기존 구현 포함)
+
+        localStorage.setItem('user_id', response.data.user_id); // 서버에서 받은 user_id 저장
         navigate('/main'); // 홈 페이지로 이동
       } else {
         setErrorMessage(response.data.message); // 로그인 실패 메시지 설정

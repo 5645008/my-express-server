@@ -6,8 +6,8 @@ import TextScanner  from './TextScan/TextScanner';
 import ImagePreview  from './TextScan/ImagePreview';
 import useCamera  from './TextScan/useCamera';
 import back from '../assets/back_arrow.png';
-
-
+import camera from '../assets/camera.png';
+import '../css/TextScanPage.styled.css';
 
 function TextScanPage() {
   const { image, captureImage } = useCamera();
@@ -16,7 +16,7 @@ function TextScanPage() {
   return (
     <div className="TextScanPage">
       <Link to="/main"><img src={back} width="20px" alt="back" /></Link>
-      <h1>Text Scanner</h1>
+      <h1><img src={camera} alt="Camera" className="button-icon" /></h1>
       <Camera onCapture={captureImage} />
       {image && (
         <>
