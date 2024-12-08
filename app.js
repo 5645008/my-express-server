@@ -409,25 +409,10 @@ app.get('/api/user-info', async (req, res) => {
       return res.status(404).json({ success: false, message: '사용자를 찾을 수 없습니다.' });
     }
 
-    // 질병 정보가 없거나 빈 문자열일 경우 빈 배열로 설정
     const user = rows[0];
-    let userDiseases = [];
 
-    // user_disease가 문자열일 경우, 특수문자 제거 후 공백을 기준으로 배열로 변환
-    if (user.user_disease) {
-      try {
-        // 특수문자([,],",,) 제거 후 공백을 기준으로 나누어 배열로 변환
-        const sanitizedDiseases = user.user_disease
-          .replace(/[,\[\]\" ]/g, ' ')  // 특수문자 및 공백을 공백으로 변경
-          .split(' ')                   // 공백을 기준으로 분리
-          .filter(disease => disease.trim() !== ''); // 빈 값은 필터링
-
-        userDiseases = sanitizedDiseases; // 최종적으로 질병 배열 설정
-      } catch (error) {
-        console.error('질병 정보 처리 오류:', error);
-        return res.status(500).json({ success: false, message: '질병 정보 처리 오류' });
-      }
-    }
+    // user_disease를 배열이나 다른 변환 없이 그대로 반환
+    const userDiseases = user.user_disease || '';  // user_disease가 null이면 빈 문자열로 설정
 
     // 사용자 정보 반환
     res.json({ success: true, data: { ...user, user_disease: userDiseases } });

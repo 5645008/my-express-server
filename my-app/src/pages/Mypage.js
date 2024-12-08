@@ -10,7 +10,7 @@ function Mypage() {
     newPassword: "",
     userName: "",
     userAge: "",
-    userDiseases: [],
+    userDiseases: "", // 문자열 형태로 시작
     userGender: "",
   });
   const [showDiseaseOptions, setShowDiseaseOptions] = useState(false);
@@ -37,12 +37,14 @@ function Mypage() {
     axios
       .get(`https://moyak.store/api/user-info?user_id=${storedUserId}`)
       .then((response) => {
+        const userDiseases = response.data.user_disease || "";
+        
         setUserInfo({
           currentPassword: "",
           newPassword: "",
           userName: response.data.user_name,
           userAge: response.data.user_age,
-          userDiseases: response.data.user_disease || [],
+          userDiseases: userDiseases, // 문자열 그대로 저장
           userGender: response.data.user_gender,
         });
       })
@@ -58,30 +60,35 @@ function Mypage() {
   };
 
   const handleDiseaseChange = (disease) => {
+    let updatedDiseases = userInfo.userDiseases.split(',').map(d => d.trim()); // 문자열을 배열로 변환
+    if (updatedDiseases.includes(disease)) {
+      // 질병이 이미 포함되어 있으면 제거
+      updatedDiseases = updatedDiseases.filter(d => d !== disease);
+    } else {
+      // 질병이 없으면 추가
+      updatedDiseases.push(disease);
+    }
+    // 배열을 다시 문자열로 변환하여 업데이트
     setUserInfo((prev) => ({
       ...prev,
-      userDiseases: prev.userDiseases.includes(disease)
-        ? prev.userDiseases.filter((d) => d !== disease)
-        : [...prev.userDiseases, disease],
+      userDiseases: updatedDiseases.join(', '),
     }));
   };
 
   const handleUpdate = async () => {
     try {
-      // 비밀번호 수정 시 현재 비밀번호와 새 비밀번호만 검사
       const updateData = {
         user_id: localStorage.getItem("user_id"),
         current_password: userInfo.currentPassword,
         new_password: userInfo.newPassword,
         user_name: userInfo.userName,
         user_age: parseInt(userInfo.userAge),
-        user_disease: userInfo.userDiseases,
+        user_disease: userInfo.userDiseases, // 문자열로 보냄
         user_gender: userInfo.userGender,
       };
 
-      // 비밀번호만 수정하고 나머지 정보는 변경하지 않음
       if (userInfo.currentPassword || userInfo.newPassword) {
-        // 새 비밀번호 입력 시 비밀번호 변경 요청
+        // 비밀번호만 수정
         const response = await axios.post("https://moyak.store/api/update-user-info", updateData);
         if (response.data.success) {
           alert("비밀번호가 변경되었습니다.");
@@ -89,12 +96,12 @@ function Mypage() {
           setErrorMessage(response.data.message);
         }
       } else {
-        // 비밀번호 변경 없이 나머지 정보만 수정
+        // 비밀번호 없이 정보만 수정
         const response = await axios.post("https://moyak.store/api/update-user-info", {
           user_id: localStorage.getItem("user_id"),
           user_name: userInfo.userName,
           user_age: parseInt(userInfo.userAge),
-          user_disease: userInfo.userDiseases,
+          user_disease: userInfo.userDiseases, // 문자열로 보냄
           user_gender: userInfo.userGender,
         });
         if (response.data.success) {
@@ -164,24 +171,27 @@ function Mypage() {
           onClick={() => setShowDiseaseOptions(!showDiseaseOptions)}
         >
           {userInfo.userDiseases.length > 0
-            ? userInfo.userDiseases.join(", ")
+            ? userInfo.userDiseases
             : "지병을 선택하세요"}
         </div>
 
         {showDiseaseOptions && (
           <div className="checkbox-group">
-            {diseaseOptions.map((disease, index) => (
-              <div key={index} className="checkbox-item">
-                <input
-                  type="checkbox"
-                  id={`disease-${index}`}
-                  value={disease}
-                  checked={userInfo.userDiseases.includes(disease)}
-                  onChange={() => handleDiseaseChange(disease)}
-                />
-                <label htmlFor={`disease-${index}`}>{disease}</label>
-              </div>
-            ))}
+            {diseaseOptions.map((disease, index) => {
+              const isChecked = userInfo.userDiseases.split(',').map(d => d.trim()).includes(disease);
+              return (
+                <div key={index} className="checkbox-item">
+                  <input
+                    type="checkbox"
+                    id={`disease-${index}`}
+                    value={disease}
+                    checked={isChecked}  // user_disease에 포함된 경우 체크
+                    onChange={() => handleDiseaseChange(disease)}
+                  />
+                  <label htmlFor={`disease-${index}`}>{disease}</label>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
