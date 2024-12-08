@@ -398,28 +398,31 @@ app.delete('/api/reminders/:id', async (req, res) => {
 });
 
 // 회원정보 조회 API
-app.get('/api/user-info', async (req, res) => {
+app.get('/api/user-info', (req, res) => {
   const { user_id } = req.query;
-
-  try {
-    const query = 'SELECT user_name, user_age, user_disease, user_gender FROM user WHERE user_id = ?';
-    const [rows] = await db.query(query, [user_id]);
-
-    if (rows.length === 0) {
-      return res.status(404).json({ success: false, message: '사용자를 찾을 수 없습니다.' });
-    }
-
-    const user = rows[0];
-
-    // user_disease를 배열이나 다른 변환 없이 그대로 반환
-    const userDiseases = user.user_disease || '';  // user_disease가 null이면 빈 문자열로 설정
-
-    // 사용자 정보 반환
-    res.json({ success: true, data: { ...user, user_disease: userDiseases } });
-  } catch (error) {
-    console.error('회원정보 조회 오류:', error);
-    res.status(500).json({ success: false, message: '회원정보 조회에 실패했습니다.' });
+  if (!user_id) {
+    return res.status(400).json({ error: '약 이름이 필요합니다.' });
   }
+  const query = `
+    SELECT 
+      user_name, 
+      user_age, 
+      user_disease, 
+      user_gender
+    FROM user
+    WHERE user_id = ? 
+    LIMIT 1
+  `;
+  db.query(query, [user_id], (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: 'Database query error' });
+    }
+    if (results.length > 0) {
+      res.json(results[0]);
+    } else {
+      res.status(404).json({ error: '사용자 정보를 찾을 수 없습니다.' });
+    }
+  });
 });
 
 // 회원정보 수정 API
