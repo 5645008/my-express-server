@@ -401,7 +401,7 @@ app.delete('/api/reminders/:id', async (req, res) => {
 app.get('/api/user-info', (req, res) => {
   const { user_id } = req.query;
   if (!user_id) {
-    return res.status(400).json({ error: '약 이름이 필요합니다.' });
+    return res.status(400).json({ error: '로그인이 필요합니다.' });
   }
   const query = `
     SELECT 
@@ -457,6 +457,60 @@ app.post('/api/user-update', async (req, res) => {
     console.error('회원정보 수정 오류:', error);
     res.status(500).json({ success: false, message: '회원정보 수정에 실패했습니다.' });
   }
+});
+
+
+/////////////////////////////////////
+// 사용자 정보를 가져오는 API
+app.get('/api/get-userinfo', (req, res) => {
+  const { user_id } = req.query; // 클라이언트로부터 받은 user_id
+
+  if (!user_id) {
+    return res.status(400).json({ success: false, message: 'user_id가 필요합니다.' });
+  }
+
+  // 데이터베이스에서 사용자 정보 조회
+  const query = 'SELECT user_id, user_name, user_age, user_disease, user_gender FROM users WHERE user_id = ?';
+  
+  db.query(query, [user_id], (err, results) => {
+    if (err) {
+      return res.status(500).json({ success: false, message: '서버 오류 발생' });
+    }
+    
+    if (results.length > 0) {
+      res.json({ success: true, userInfo: results[0] });
+    } else {
+      res.status(404).json({ success: false, message: '사용자를 찾을 수 없습니다.' });
+    }
+  });
+});
+
+// 사용자 정보를 업데이트하는 API
+app.post('/api/update-userinfo', (req, res) => {
+  const { user_id, user_name, user_age, user_disease, user_gender } = req.body;
+
+  if (!user_id) {
+    return res.status(400).json({ success: false, message: 'user_id가 필요합니다.' });
+  }
+
+  // 업데이트할 데이터가 존재하는지 확인
+  if (!user_name || !user_age || !user_disease || !user_gender) {
+    return res.status(400).json({ success: false, message: '모든 필드를 채워주세요.' });
+  }
+
+  // 데이터베이스에서 사용자 정보 업데이트
+  const query = `UPDATE users SET user_name = ?, user_age = ?, user_disease = ?, user_gender = ? WHERE user_id = ?`;
+  db.query(query, [user_name, user_age, user_disease, user_gender, user_id], (err, results) => {
+    if (err) {
+      return res.status(500).json({ success: false, message: '서버 오류 발생' });
+    }
+
+    if (results.affectedRows > 0) {
+      res.json({ success: true, message: '사용자 정보가 성공적으로 업데이트되었습니다.' });
+    } else {
+      res.status(404).json({ success: false, message: '사용자 정보를 업데이트할 수 없습니다.' });
+    }
+  });
 });
 
 
