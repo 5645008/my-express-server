@@ -97,7 +97,7 @@ function Mypage() {
         }
       } else {
         // 비밀번호 없이 정보만 수정
-        const response = await axios.post("https://moyak.store/api/update-user-info", {
+        const response = await axios.post("https://moyak.store/api/user-update", {
           user_id: localStorage.getItem("user_id"),
           user_name: userInfo.userName,
           user_age: parseInt(userInfo.userAge),
