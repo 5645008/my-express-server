@@ -403,7 +403,7 @@ app.get('/api/user-info', async (req, res) => {
 
   try {
     const query = 'SELECT user_name, user_age, user_disease, user_gender FROM user WHERE user_id = ?';
-    const [rows] = await pool.query(query, [user_id]);
+    const [rows] = await db.query(query, [user_id]);
 
     if (rows.length === 0) {
       return res.status(404).json({ success: false, message: '사용자를 찾을 수 없습니다.' });
@@ -433,7 +433,7 @@ app.post('/api/user-update', async (req, res) => {
 
   try {
     if (current_password && new_password) {
-      const [rows] = await pool.query('SELECT user_password FROM user WHERE user_id = ?', [user_id]);
+      const [rows] = await db.query('SELECT user_password FROM user WHERE user_id = ?', [user_id]);
       if (rows.length === 0 || rows[0].user_password !== current_password) {
         return res.status(400).json({ success: false, message: '현재 비밀번호가 일치하지 않습니다.' });
       }
@@ -451,7 +451,7 @@ app.post('/api/user-update', async (req, res) => {
       ? [user_name, user_age, user_gender, diseaseJson, new_password, user_id]
       : [user_name, user_age, user_gender, diseaseJson, user_id];
 
-    await pool.query(updateQuery, params);
+    await db.query(updateQuery, params);
 
     res.json({ success: true, message: '회원정보가 성공적으로 수정되었습니다.' });
   } catch (error) {
