@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../css/Mypage.styled.css";
 import axios from "axios";
+import back from '../assets/back_arrow.png';
 
 function Mypage() {
   const [userInfo, setUserInfo] = useState({
@@ -118,6 +119,9 @@ function Mypage() {
 
   return (
     <div className="mypage-container">
+      <Link to="/main" className="back-button">
+          <img src={back} alt="뒤로 가기" />
+        </Link>
       <h2 className="mypage-title">마이페이지</h2>
 
       <div className="form-group">
@@ -212,6 +216,9 @@ function Mypage() {
 
       <button className="mypage-button" onClick={handleUpdate}>
         변경하기
+      </button>
+      <button className="logout-button" onClick={() => navigate("/signup")} >
+        로그아웃
       </button>
     </div>
   );
