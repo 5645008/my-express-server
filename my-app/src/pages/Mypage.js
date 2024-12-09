@@ -1,6 +1,6 @@
 // src/pages/Mypage.js
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../css/Mypage.styled.css";
 import axios from "axios";
 import back from '../assets/back_arrow.png';
