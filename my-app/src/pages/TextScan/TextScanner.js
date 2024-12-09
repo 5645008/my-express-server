@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { GOOGLE_CLOUD_VISION_API_KEY } from './config';
 import { useNavigate } from 'react-router-dom';
+import '../../css/TextScanner.styled.css'
 
 const TextScanner = ({ image }) => {
   const [text, setText] = useState('');
@@ -87,8 +88,8 @@ const TextScanner = ({ image }) => {
   };
 
   return (
-    <div>
-      <button onClick={scanText}>Scan Text</button>
+    <div className="text-scanner-container">
+      <button className="scan-text-button" onClick={scanText}>단어 추출</button>
       {text && <p><strong>Detected Text:</strong> {text}</p>}
       <h2>전처리된 단어 목록:</h2>
       <ul>
@@ -106,7 +107,12 @@ const TextScanner = ({ image }) => {
                 <p><strong>약 이름:</strong> {medicine.itemName}</p>
                 <p><strong>효능:</strong> {medicine.efcyQesitm}</p>
                 {/* "자세히 보기" 버튼 추가 */}
-                <button onClick={() => handleDetails(medicine.itemName)}>자세히 보기</button>
+                <button
+                  className="details-button"
+                  onClick={() => handleDetails(medicine.itemName)}
+                >
+                  자세히 보기
+                </button>
               </li>
             ))}
           </ul>
@@ -116,6 +122,7 @@ const TextScanner = ({ image }) => {
       )}
     </div>
   );
+  
 };
 
 export default TextScanner;

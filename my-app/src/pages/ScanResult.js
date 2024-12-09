@@ -1,47 +1,35 @@
-// ScanResult.js
-import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import '../css/ScanResult.styled.css';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import Camera from './TextScan/Camera';
+import TextScanner from './TextScan/TextScanner';
+import ImagePreview from './TextScan/ImagePreview';
+import useCamera from './TextScan/useCamera';
+import back from '../assets/back_arrow.png';
+import cameraIcon from '../assets/camera.png';
+import '../css/TextScanPage.styled.css';
 
-const ScanResult = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  // Test.js에서 전달된 스캔된 텍스트와 간략한 정보를 받아옵니다.
-  const { scannedText, summary } = location.state || { scannedText: "약 이름", summary: "간략한 정보가 여기에 표시됩니다." };
-  
-  const [isOpen, setIsOpen] = useState(false);
-
-  const handleDetailsClick = () => {
-    navigate('/details', { state: { text: scannedText } });
-  };
-
-  const toggleSlideUp = () => {
-    setIsOpen(!isOpen);
-  };
+function TextScanPage() {
+  const { image, captureImage } = useCamera();
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h2>스캔 결과</h2>
-      <button 
-        onClick={toggleSlideUp}
-        style={{ marginTop: '20px', padding: '10px', fontSize: '16px', cursor: 'pointer' }}
-      >
-        스캔 결과 보기
-      </button>
-
-      <div className={`slide-up-container ${isOpen ? 'open' : ''}`}>
-        <h3>스캔된 텍스트: {scannedText}</h3>
-        <p>간략한 정보: {summary}</p>
-        <button 
-          onClick={handleDetailsClick} 
-          style={{ marginTop: '20px', padding: '10px', fontSize: '16px', cursor: 'pointer' }}
-        >
-          자세히 보기
-        </button>
+    <div className="TextScanPage">
+      <Link to="/main">
+        <img src={back} width="20px" alt="뒤로 가기" />
+      </Link>
+      <h1>
+        <img src={cameraIcon} alt="Camera" className="button-icon" />
+      </h1>
+      <div className="camera-container">
+        <Camera onCapture={captureImage} />
       </div>
+      {image && (
+        <>
+          <ImagePreview image={image} />
+          <TextScanner image={image} />
+        </>
+      )}
     </div>
   );
-};
+}
 
-export default ScanResult;
+export default TextScanPage;
