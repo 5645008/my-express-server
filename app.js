@@ -80,7 +80,7 @@ db.query('SELECT 1', (err, results) => {
 app.post('/api/signup', (req, res) => {
   const { user_id, user_password, user_name, user_age, user_disease, user_gender } = req.body;
 
-  const query = 'INSERT INTO user (user_id, user_password, user_name, user_age, user_disease, user_gender) VALUES (?, ?, ?, ?, ?)';
+  const query = 'INSERT INTO user (user_id, user_password, user_name, user_age, user_disease, user_gender) VALUES (?, ?, ?, ?, ?, ?)';
   const values = [user_id, user_password, user_name, user_age, user_disease, user_gender];
 
   db.query(query, values, (error, results) => {
