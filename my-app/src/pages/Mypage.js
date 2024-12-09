@@ -217,7 +217,7 @@ function Mypage() {
       <button className="mypage-button" onClick={handleUpdate}>
         변경하기
       </button>
-      <button className="logout-button" onClick={() => navigate("/signup")} >
+      <button className="logout-button" onClick={() => navigate("/")} >
         로그아웃
       </button>
     </div>
