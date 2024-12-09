@@ -50,7 +50,7 @@ function SignUp() {
   
       if (response.data.success) {
         alert(response.data.message);
-        navigate('/login');
+        navigate('/');
       } else {
         setErrorMessage(response.data.message);
       }
