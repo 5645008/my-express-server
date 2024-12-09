@@ -119,10 +119,12 @@ function Mypage() {
 
   return (
     <div className="mypage-container">
-      <Link to="/main" className="back-button">
+      <div className="mypage-header">
+        <Link to="/main" className="back-button">
           <img src={back} alt="뒤로 가기" />
         </Link>
-      <h2 className="mypage-title">마이페이지</h2>
+        <h2 className="mypage-title">마이페이지</h2>
+      </div>
 
       <div className="form-group">
         <label>현재 비밀번호</label>

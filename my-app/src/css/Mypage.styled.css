@@ -1,66 +1,77 @@
 .mypage-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    background-color: #f9f9f9;
-  }
-  
-  .mypage-title {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-  }
-  
-  .user-info {
-    background: white;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 400px;
-  }
-  
-  .user-info p {
-    margin: 10px 0;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: #f9f9f9;
+}
 
-  .mypage-button {
-    width: 100%;
-    padding: 15px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    margin-top: 20px;
-  }
-  
-  .mypage-button:hover {
-    background-color: #0056b3;
-  }
-  
-  .logout-button {
-    background-color: #ff5757;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 20px;
-  }
-  
-  .logout-button:hover {
-    background-color: #e04e4e;
-  }
+.mypage-header {
+  display: flex;
+  align-items: center; /* 버튼과 제목 세로 중앙 정렬 */
+  justify-content: center; /* 가로 가운데 정렬 */
+  margin-bottom: 20px; /* 아래 간격 */
+}
 
-  .back-button:hover {
-    background-color: #f0f0f0;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
-  
-  .back-button img {
-    width: 20px;
-    height: 20px;
-  }
+.back-button {
+  margin-right: 10px; /* 제목과 버튼 간격 */
+}
+
+.back-button img {
+  width: 20px; /* 이미지 크기 */
+  height: 20px; /* 이미지 크기 */
+  cursor: pointer;
+}
+
+.mypage-title {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.user-info {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+.user-info p {
+  margin: 10px 0;
+}
+
+.mypage-button {
+  width: 100%;
+  padding: 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.mypage-button:hover {
+  background-color: #0056b3;
+}
+
+.logout-button {
+  background-color: #ff5757;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.logout-button:hover {
+  background-color: #e04e4e;
+}
+
+.back-button:hover {
+  background-color: #f0f0f0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
