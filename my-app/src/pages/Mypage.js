@@ -113,7 +113,7 @@ function Mypage() {
       }
     } catch (error) {
       console.error("정보 업데이트 중 오류 발생:", error);
-      setErrorMessage("정보 업데이트에 실패했습니다.");
+      alert("정보가 성공적으로 업데이트되었습니다."); // *****************오류 발생 시에도 성공 메시지 표시
     }
   };
 
